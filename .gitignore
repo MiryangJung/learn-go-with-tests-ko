@@ -1,0 +1,12 @@
+.idea/
+*.iml
+
+# Book build output
+_book/
+
+# eBook build output
+*.epub
+*.mobi
+*.pdf
+
+game.db.json
