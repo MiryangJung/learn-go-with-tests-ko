@@ -1,5 +1,6 @@
 {
+    "root": "./ko-KR",
     "structure": {
-        "readme": "gb-readme.md"
+        "readme": "README.md"
     }
 }
