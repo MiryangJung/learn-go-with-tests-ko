@@ -1,7 +1,7 @@
 # 테스트와 함께 Go 배우기
 
 <p align="center">
-  <img src="./red-green-blue-gophers-smaller.png" />
+  <img src="../red-green-blue-gophers-smaller.png" />
 </p>
 
 [Art by Denise](https://twitter.com/deniseyu21)
