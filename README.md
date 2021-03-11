@@ -4,6 +4,8 @@
 
 Go 기초부터 TDD 까지 배울 수 있는 아주 좋은 프로젝트라고 생각하여 번역을 하면 좋겠다고 생각했습니다.
 
+[Learn Go with Tests Korean Gitbook](https://miryang.gitbook.io/learn-go-with-tests/)
+
 ---
 
 ## 번역 기여
