@@ -1,10 +1,10 @@
 # Integers
 
-**[이 챕터의 모든 코드는 여기에서 확인할 수 있습니다.](https://github.com/MiryangJung/learn-go-with-tests-ko/tree/master/integers)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/MiryangJung/learn-go-with-tests-ko/tree/master/integers)**
 
-정수(Integers)는 예상한 대로 동작합니다. 시도하기 위해 `Add` 함수를 작성합니다. `adder_test.go` 라는 테스트 파일을 생성한 후 이 코드를 작성합니다.
+정수(Integers)는 예상한 대로 동작한다. 시도하기 위해 `Add` 함수를 작성한다. `adder_test.go`라는 테스트 파일을 생성한 후 이 코드를 작성한다.
 
-**Note:** Go source files can only have one `package` per directory, make sure that your files are organised separately. [Here is a good explanation on this.](https://dave.cheney.net/2014/12/01/five-suggestions-for-setting-up-a-go-project)
+**주의:** Go의 소스 파일은 각 폴더에 하나의 `package`만 가질 수 있다. 파일이 별도로 구성되어 있는지 확인해야 한다. [여기에 좋은 예시가 있다.](https://dave.cheney.net/2014/12/01/five-suggestions-for-setting-up-a-go-project)
 
 ## Write the test first
 
