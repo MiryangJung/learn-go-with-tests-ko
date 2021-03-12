@@ -23,21 +23,21 @@ func TestAdder(t *testing.T) {
 }
 ```
 
-You will notice that we're using `%d` as our format strings rather than `%q`. That's because we want it to print an integer rather than a string.
+`%q`가 아닌 `%d`로 형식 문자열을 사용하고 있음을 알 수 있습니다. 왜냐하면 문자열보다는 정수를 출력하기 원하기 때문입니다.
 
-Also note that we are no longer using the main package, instead we've defined a package named `integers`, as the name suggests this will group functions for working with integers such as `Add`.
+또한 더 이상 main 패키지를 사용하지 않으며 대신 `integers`라는 패키지를 정의했습니다. 이름에서 알 수 있듯이 `Add`와 같은 정수를 처리하기 위한 함수를 그룹화합니다.
 
-## Try and run the test
+## 테스트를 시도해보세요.
 
-Run the test `go test`
+`go test` 명령어를 이용해 테스트를 실행합니다.
 
-Inspect the compilation error
+컴파일 에러를 확인할 수 있습니다.
 
 `./adder_test.go:6:9: undefined: Add`
 
-## Write the minimal amount of code for the test to run and check the failing test output
+## 테스트를 실행할 최소한의 코드를 작성하고 실패한 테스트 출력을 확인하세요.
 
-Write enough code to satisfy the compiler _and that's all_ - remember we want to check that our tests fail for the correct reason.
+컴파일러를 만족시킬 수 있는 최소한의 코드를 작성합니다. _그것이 전부입니다._ - 우리의 테스트 테스트가 올바른 이유로 실패하는 것을 확인하길 원하는 것을 기억해야 합니다.
 
 ```go
 package integers
@@ -47,9 +47,9 @@ func Add(x, y int) int {
 }
 ```
 
-When you have more than one argument of the same type \(in our case two integers\) rather than having `(x int, y int)` you can shorten it to `(x, y int)`.
+두 개 이상의 같은 타입의 인자를 갖는다면 \(지금 케이스에서는 두 개의 정수\) `(x int, y, int)`보다 `(x, y int)`로 짧게 할 수 있습니다.
 
-Now run the tests and we should be happy that the test is correctly reporting what is wrong.
+이제 테스트를 실행하고 테스트가 올바르게 잘못된 내용을 보고하고 있다는 사실에 만족해야 합니다.
 
 `adder_test.go:10: expected '4' but got '0'`
 
