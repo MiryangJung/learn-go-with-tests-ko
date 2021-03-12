@@ -2,15 +2,15 @@
 
 **[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/main/sync)**
 
-안전하게 병행적으로 (concurrently) 사용할 수 있는 카운터를 작성합니다.
+안전하게 동시적으로 (concurrently) 사용할 수 있는 카운터를 작성합니다.
 
-먼저 병행적으로 안전하지 않은 카운터를 만들어 싱글-스레드 환경에서 정상적으로 작동하는지 확인하겠습니다.
+먼저 동시적으로 안전하지 않은 카운터를 만들어 싱글-스레드 환경에서 정상적으로 작동하는지 확인하겠습니다.
 
 이후에 해당 카운터의 불안정함을 여러 고루틴들 (goroutines) 을 통하여 테스트 하여 수정할 것 입니다.
 
 ## Write the test first
 
-카운터를 증가시킨 다음 그 값을 알리는 메소드를 제공하는 API를 작성합니다.
+카운터를 증가시킨 다음 그 값을 알리는 메서드를 제공하는 API를 작성합니다.
 
 ```go
 func TestCounter(t *testing.T) {
@@ -50,7 +50,7 @@ type Counter struct {
 ./sync_test.go:18:13: counter.Value undefined (type Counter has no field or method Value)
 ```
 
-따라서 테스트가 성공할 수 있도록 다음과 같은 메소드들을 정의합니다.
+따라서 테스트가 성공할 수 있도록 다음과 같은 메서드들을 정의합니다.
 
 ```go
 func (c *Counter) Inc() {
@@ -92,7 +92,7 @@ func (c *Counter) Value() int {
 
 ## Refactor
 
-리팩토링 할 내용이 많지는 않지만 `Counter`에 대해 더 많은 테스트를 작성할 예정이므로 `assertCount` 라는 작은 표명 (assertion) 함수를 작성하여 테스트가 좀 더 명확해질 수 있도록 작성합니다.
+리팩토링 할 내용이 많지는 않지만 `Counter`에 대해 더 많은 테스트를 작성할 예정이므로 `assertCount` 라는 작은 assertion (확인) 함수를 작성하여 테스트가 좀 더 명확해질 수 있도록 작성합니다.
 
 ```go
 t.Run("incrementing the counter 3 times leaves it at 3", func(t *testing.T) {
@@ -114,7 +114,7 @@ func assertCounter(t testing.TB, got Counter, want int)  {
 
 ## Next steps
 
-여기까지는 그리 어렵지 않았습니다만 이제 병행 환경에서 안전하게 사용될 수 있도록 조건들을 추가해야 합니다. 이를 위해 실패할 테스트를 작성합니다.
+여기까지는 그리 어렵지 않았습니다만 이제 동시적 환경에서 안전하게 사용될 수 있도록 조건들을 추가해야 합니다. 이를 위해 실패할 테스트를 작성합니다.
 
 ## Write the test first
 
@@ -140,11 +140,11 @@ t.Run("it runs safely concurrently", func(t *testing.T) {
 
 위의 테스트는 `wantedCount` 값 만큼 반복문을 실행하며, `counter.Inc()`라는 고루틴 (goroutine) 을 실행 할 것입니다.
 
-병행적 프로세스들을 동기화 하는데 간편한 방법인 [`sync.WaitGroup`](https://golang.org/pkg/sync/#WaitGroup)을 이용할것 입니다.
+동시적 프로세스들을 동기화 하는데 간편한 방법인 [`sync.WaitGroup`](https://golang.org/pkg/sync/#WaitGroup)을 이용할것 입니다.
 
 > WaitGroup은 관련 고루틴들이 완료되기를 기다립니다. 메인 고루틴은 기다려야할 고루틴의 숫자를 설정하기 위하여 Add를 호출합니다. 이후 각각의 고루틴들은 실행후 완료되었음을 알리기 위해 Done을 호출합니다. 이와 동시에 모든 고루틴이 완료 될때까지 Wait을 사용하여 차단 (block) 할 수 있습니다.
 
-`wg.Wait()`를 사용하여 모든 고루틴들이 `Counter`에 대해 `Inc`를 시도하였음을 표명 (assertion) 하기 전에 분명히 할 수 있습니다.
+`wg.Wait()`를 사용하여 모든 고루틴들이 `Counter`에 대해 `Inc`를 시도하였음을 assertion 하기 전에 분명히 할 수 있습니다.
 
 ## Try to run the test
 
@@ -204,9 +204,9 @@ func (c *Counter) Inc() {
 
 이와 같은 코드는 프로그래밍이 굉장히 주관적인 원칙에 의해 진행되므로 _좋아_ 보일 수 있습니다만, 사실 **나쁘고 잘못된** 코드입니다.
 
-때때로 사람들은 임베딩 (embedding) 유형은 곧 해당 유형의 메소드가 _공개 인터페이스의 일부_ 가 됨을 잊고 있으며 동시에 그렇게 되지 않기를 원합니다. 우리는 Public APIs 에 대해 매우 주의해야 하는데 이는 해당 APIs 공개하는 순간 다른 코드들과 결합되어 (couple) 사용되기 때문입니다. 우리는 항상 불필요한 결합을 피하기를 원합니다.
+때때로 사람들은 임베딩 (embedding) 유형은 곧 해당 유형의 메서드가 _공개 인터페이스의 일부_ 가 됨을 잊고 있으며 동시에 그렇게 되지 않기를 원합니다. 우리는 Public APIs 에 대해 매우 주의해야 하는데 이는 해당 APIs 공개하는 순간 다른 코드들과 결합되어 (couple) 사용되기 때문입니다. 우리는 항상 불필요한 결합을 피하기를 원합니다.
 
-`Lock` 과 `Unlock` 의 노출은 이와 관련된 메소드들을 호출하기 시작하는 순간 해당 소프트웨어에 최선의 경우 혼란을, 최악의 경우 잠재적으로 굉장히 해로울 수 있습니다.
+`Lock` 과 `Unlock` 의 노출은 이와 관련된 메서드들을 호출하기 시작하는 순간 해당 소프트웨어에 최선의 경우 혼란을, 최악의 경우 잠재적으로 굉장히 해로울 수 있습니다.
 
 ![이와 같은 API를 사용하는 유저가 락의 상태를 잘못된 상태로 사용할 수 있는지를 보여주는 예시](https://i.imgur.com/SWYNpwm.png)
 
@@ -272,5 +272,5 @@ func NewCounter() *Counter {
 ### Don't use embedding because it's convenient
 
 - 임베딩이 공용 API에 미치는 영향에 대해 생각해보세요.
-- _정말_ 해당 메소드들을 노출시켜 유저들이 해당 코드들을 다른 코드와 결합할 수 있도록 하고 싶은가요?
+- _정말_ 해당 메서드들을 노출시켜 유저들이 해당 코드들을 다른 코드와 결합할 수 있도록 하고 싶은가요?
 - Mutex는 굉장히 예측할 수 없으며 이상한 형태로 잠재적 재앙이 될 수 있습니다. Mutex의 잠금을 해제하는 악의적인 코드를 상상해보세요. 이는 추적 하기 어려운 굉장히 이상한 버그를 일으킬 것입니다.
