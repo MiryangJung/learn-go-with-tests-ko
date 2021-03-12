@@ -2,7 +2,7 @@
 
 **[이 챕터의 모든 코드는 여기에서 확인할 수 있습니다.](https://github.com/MiryangJung/learn-go-with-tests-ko/tree/master/integers)**
 
-정수는 예상한 대로 동작합니다. 시도하기 위해 `Add` 함수를 작성합니다. `adder_test.go`라는 테스트 파일을 생성한 후 이 코드를 작성합니다.
+정수는 예상한 대로 동작합니다. 시도하기 위해 `Add`함수를 작성합니다. `adder_test.go`라는 테스트 파일을 생성한 후 이 코드를 작성합니다.
 
 **주의:** Go의 소스 파일은 각 폴더에 하나의 `package`만 가질 수 있습니다. 파일이 별도로 구성되어 있는지 확인해야 합니다. [여기에 좋은 예시가 있습니다.](https://dave.cheney.net/2014/12/01/five-suggestions-for-setting-up-a-go-project)
 
@@ -53,11 +53,11 @@ func Add(x, y int) int {
 
 `adder_test.go:10: expected '4' but got '0'`
 
-If you have noticed we learnt about _named return value_ in the [last](hello-world.md#one...last...refactor?) section but aren't using the same here. It should generally be used when the meaning of the result isn't clear from context, in our case it's pretty much clear that `Add` function will add the parameters. You can refer [this](https://github.com/golang/go/wiki/CodeReviewComments#named-result-parameters) wiki for more details.
+[이전](hello-world.md#one...last...refactor?) 섹션에서는 *명명된 반환 값*에 대해 배웠지만 여기서는 동일한 값을 사용하지 않습니다. 일반적으로 결과의 의미가 컨텍스트에서 명확하지 않을 때 사용해야 하며, 이 경우에는 `Add`함수에 매개변수를 추가하는 것이 매우 명확합니다. 자세한 내용은 [여기](https://github.com/golang/go/wiki/CodeReviewComments#named-result-parameters) 위키를 참조할 수 있습니다.
 
-## Write enough code to make it pass
+## 통과할 만큼 충분한 코드를 작성하세요.
 
-In the strictest sense of TDD we should now write the _minimal amount of code to make the test pass_. A pedantic programmer may do this
+테스트 주도 개발의 가장 엄격한 의미에서 이제 *테스트를 통과하기 위한 최소한의 코드를 작성*해야 합니다. 지나치게 규칙을 찾는 프로그래머는 이렇게 할 것입니다.
 
 ```go
 func Add(x, y int) int {
@@ -65,13 +65,13 @@ func Add(x, y int) int {
 }
 ```
 
-Ah hah! Foiled again, TDD is a sham right?
+아하! 또 망쳤습니다, 테스트 주도 개발은 엉터리가 맞죠?
 
-We could write another test, with some different numbers to force that test to fail but that feels like [a game of cat and mouse](https://en.m.wikipedia.org/wiki/Cat_and_mouse).
+우리는 또 다른 테스트를 작성할 수 있습니다. 몇 가지 다른 숫자를 가지고 그 테스트가 강제적으로 실패하도록 할 수 있습니다. 그러나 그것은 너무 [고양이와 쥐의 게임](https://en.m.wikipedia.org/wiki/Cat_and_mouse)처럼 느껴집니다.
 
-Once we're more familiar with Go's syntax I will introduce a technique called _"Property Based Testing"_, which would stop annoying developers and help you find bugs.
+일단 우리가 Go의 문법에 익숙해지면 개발자를 짜증 나게 하는 것을 멈추고 버그를 찾는 것을 도와주는 *"속성 기반 테스팅"*이라는 기술을 소개할 것입니다.
 
-For now, let's fix it properly
+이제 제대로 코드를 고칩니다.
 
 ```go
 func Add(x, y int) int {
@@ -79,36 +79,36 @@ func Add(x, y int) int {
 }
 ```
 
-If you re-run the tests they should pass.
+테스트를 다시 실행하면 통과해야 합니다.
 
-## Refactor
+## 리팩토링
 
-There's not a lot in the _actual_ code we can really improve on here.
+_실제_ 코드에는 우리가 실제로 개선할 수 있는 것이 많지 않습니다.
 
-We explored earlier how by naming the return argument it appears in the documentation but also in most developer's text editors.
+우리는 이전에 반환 인자의 이름을 문서에 표시했지만 또한 대부분의 개발자의 텍스트 편집기에도 표시하는 방법을 탐구했습니다.
 
-This is great because it aids the usability of code you are writing. It is preferable that a user can understand the usage of your code by just looking at the type signature and documentation.
+이것은 작성 중인 코드의 편리함에 도움이 되기 때문에 좋습니다. 사용자는 타입 시그니처와 문서만 보고 코드를 사용하는 방법을 이해할 수 있는 것이 좋습니다.
 
-You can add documentation to functions with comments, and these will appear in Go Doc just like when you look at the standard library's documentation.
+설명과 함께 함수에 문서를 추가할 수 있으며, 표준 라이브러리의 문서를 볼 때와 마찬가지로 Go Doc에 문서가 보입니다.
 
 ```go
-// Add takes two integers and returns the sum of them.
+// Add는 두 개의 정수를 사용하고 합을 반환합니다.
 func Add(x, y int) int {
 	return x + y
 }
 ```
 
-### Examples
+### 예시
 
-If you really want to go the extra mile you can make [examples](https://blog.golang.org/examples). You will find a lot of examples in the documentation of the standard library.
+만약 더 멀리 가고 싶다면 [예시](https://blog.golang.org/examples)를 만들 수 있습니다. 표준 라이브러리의 문서에는 많은 예시가 나와 있습니다.
 
-Often code examples that can be found outside the codebase, such as a readme file often become out of date and incorrect compared to the actual code because they don't get checked.
+종종 README 파일과 같이 코드 베이스 밖에서 발견될 수 있는 코드 예제는 확인받지 못하기 때문에 실제 코드와 비교하여 오래되고 정확하지 않은 경우가 많다.
 
-Go examples are executed just like tests so you can be confident examples reflect what the code actually does.
+Go 예시는 테스트와 마찬가지로 실행되기 때문에 코드에서 실제로 수행하는 작업을 확실히 반영할 수 있습니다.
 
-Examples are compiled \(and optionally executed\) as part of a package's test suite.
+예시는 패키지의 테스트 모임의 일부로 컴파일 \(또한 선택적으로 실행\) 됩니다.
 
-As with typical tests, examples are functions that reside in a package's `_test.go` files. Add the following `ExampleAdd` function to the `adder_test.go` file.
+일반적인 테스트와 마찬가지로 예시는 패키지의 `_test.go`파일에있는 함수입니다. `adder_test.go`파일에 아래의 `ExampleAdd`함수를 추가합니다.
 
 ```go
 func ExampleAdd() {
@@ -118,11 +118,11 @@ func ExampleAdd() {
 }
 ```
 
-(If your editor doesn't automatically import packages for you, the compilation step will fail because you will be missing `import "fmt"` in `adder_test.go`. It is strongly recommended you research how to have these kind of errors fixed for you automatically in whatever editor you are using.)
+(텍스트 편집기가 패키지를 자동적으로 가져오지 않으면 `adder_test.go`에 `import "fmt"`가 누락되어 컴파일 단계가 실패합니다. 어떤 편집기를 사용하던지 이러한 종류의 오류를 자동으로 수정하는 방법을 조사하는 것이 좋습니다.)
 
-If your code changes so that the example is no longer valid, your build will fail.
+코드가 변경되어 예시가 더 이상 유효하지 않으면 빌드가 실패합니다.
 
-Running the package's test suite, we can see the example function is executed with no further arrangement from us:
+패키지의 테스트 모임을 실행하면 추가적인 정리 없이 예시 함수가 실행되는 것을 볼 수 있습니다.
 
 ```bash
 $ go test -v
@@ -132,21 +132,21 @@ $ go test -v
 --- PASS: ExampleAdd (0.00s)
 ```
 
-Please note that the example function will not be executed if you remove the comment `//Output: 6`. Although the function will be compiled, it won't be executed.
+`// Output: 6` 주석을 제거하면 함수가 컴파일되지만 예시 함수가 실행되지 않습니다.
 
-By adding this code the example will appear in the documentation inside `godoc`, making your code even more accessible.
+이 코드를 추가하면 `godoc` 내부의 문서에 예시가 표시되어 코드에 더 쉽게 접근할 수 있습니다.
 
-To try this out, run `godoc -http=:6060` and navigate to `http://localhost:6060/pkg/`
+이것을 시도하려면 `godoc -http=:6000`을 실행하고 `http://localhost:6060/pkg/`로 이동합니다.
 
-Inside here you'll see a list of all the packages in your `$GOPATH`, so assuming you wrote this code in somewhere like `$GOPATH/src/github.com/{your_id}` you'll be able to find your example documentation.
+`$GOPATH`의 모든 패키지 목록이 표시되므로 `$GOPATH/src/github.com/{your_id}`와 같은 곳에 코드를 작생핬다고 가정하면 예시 문서를 찾을 수 있습니다.
 
-If you publish your code with examples to a public URL, you can share the documentation of your code at [pkg.go.dev](https://pkg.go.dev/). For example, [here](https://pkg.go.dev/github.com/quii/learn-go-with-tests/integers/v2) is the finalised API for this chapter. This web interface allows you to search for documentation of standard library packages and third-party packages.
+예시와 함께 코드를 공개된 URL에 게시하는 경우 [pkg.go.dev](https://pkg.go.dev/)에서 코드 문서를 공유 할 수 있습니다. 예를 들어, [이것](https://pkg.go.dev/github.com/quii/learn-go-with-tests/integers/v2)은 이 챕터의 최종 API입니다. 이 웹 인터페이스를 사용하면 표준 라이브러리 패키지 및 서드 파티 패키지의 문서를 검색 할 수 있습니다.
 
-## Wrapping up
+## 마무리
 
-What we have covered:
+우리가 다룬 내용은 아래와 같습니다.
 
--   More practice of the TDD workflow
--   Integers, addition
--   Writing better documentation so users of our code can understand its usage quickly
--   Examples of how to use our code, which are checked as part of our tests
+-   테스트 주도 개발 워크플로우의 더 많은 연습
+-   정수, 더하기
+-   코드 사용자가 사용법을 빠르게 이해할 수 있도록 더 나은 문서 작성
+-   테스트의 일부로 확인되는 코드 사용 방법의 예시
