@@ -138,7 +138,7 @@ $ go test -v
 
 이것을 시도하려면 `godoc -http=:6000`을 실행하고 `http://localhost:6060/pkg/`로 이동합니다.
 
-`$GOPATH`의 모든 패키지 목록이 표시되므로 `$GOPATH/src/github.com/{your_id}`와 같은 곳에 코드를 작생핬다고 가정하면 예시 문서를 찾을 수 있습니다.
+`$GOPATH`의 모든 패키지 목록이 표시되므로 `$GOPATH/src/github.com/{your_id}`와 같은 곳에 코드를 작성했다고 가정하면 예시 문서를 찾을 수 있습니다.
 
 예시와 함께 코드를 공개된 URL에 게시하는 경우 [pkg.go.dev](https://pkg.go.dev/)에서 코드 문서를 공유 할 수 있습니다. 예를 들어, [이것](https://pkg.go.dev/github.com/quii/learn-go-with-tests/integers/v2)은 이 챕터의 최종 API입니다. 이 웹 인터페이스를 사용하면 표준 라이브러리 패키지 및 서드 파티 패키지의 문서를 검색 할 수 있습니다.
 
