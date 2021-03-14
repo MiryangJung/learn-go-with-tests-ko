@@ -1,4 +1,4 @@
-# Iteration
+# 반복 
 
 **[이 장의 모든 코드는 여기에서 찾을 수 있습니다](https://github.com/quii/learn-go-with-tests/tree/main/for)**
 
