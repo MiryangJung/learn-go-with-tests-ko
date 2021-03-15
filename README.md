@@ -6,6 +6,8 @@ Go 기초부터 TDD 까지 배울 수 있는 아주 좋은 프로젝트라고 �
 
 [Learn Go with Tests Korean Gitbook](https://miryang.gitbook.io/learn-go-with-tests/)
 
+> [golang-korea Slack](https://bit.ly/2olKYdM) 의 __#learn-go-with-tests-ko__ 채널에서 소통 중입니다.
+
 ---
 
 ## 번역 기여
