@@ -63,7 +63,7 @@ t.Run("when you don't get a 200 you get a status error", func(t *testing.T) {
 
 이 책은 *테스트에 귀를 기울이는 것을* 강조하려고 합니다만, 이 테스트는 좋은 *느낌은* 아닙니다:
 
-- 테스트를 위해 production 코드와 같은 문자열을 만들었습니다
+- 테스트를 위해 프로덕션 코드와 같은 문자열을 만들었습니다
 - 읽고 쓰기 귀찮습니다
 - 정확한 에러 메세지 문자열은 *실제로 관련 있습니까* ?
 
@@ -152,7 +152,7 @@ if res.StatusCode != http.StatusOK {
 
 - `DumbGetter` 함수가 보다 단순해졌습니다. 에러 문자열의 복잡함과 관련 없어지고, `BadStatusError`를 만들 뿐입니다.
 - 이제 테스트는 코드 사용자가 단순한 로깅보다 더 정교한 에러 처리를 원할 경우, 사용자가 *할 수 있는* 작업을 반영(그리고 문서화)합니다. 타입 어서션을 하는 것만으로도, 에러의 프로퍼티에 쉽게 접근할 수 있습니다.
-- 그럼에도 "단순히" `error`이기 때문에, 사용자가 원한다면 다른 `error`처럼 콜 스택에 쌓거나, 로그로 기록할 수 있습니다.
+- 그럼에도 여전히 "단순한" `error`이기 때문에, 사용자가 원한다면 다른 `error`처럼 콜 스택에 쌓거나, 로그로 기록할 수 있습니다.
 
 ## 정리
 
@@ -194,5 +194,5 @@ t.Run("when you don't get a 200 you get a status error", func(t *testing.T) {
 })
 ```
 
-이 경우, [`errors.As`](https://golang.org/pkg/errors/#example_As)를 사용해 에러를 custom 타입으로 추출합니다. 성공을 나타내기 위해 `bool`을 반환하고, 이를 `got`으로 추출합니다.
+이 경우, [`errors.As`](https://golang.org/pkg/errors/#example_As)를 사용해 에러를 커스텀 타입으로 추출합니다. 성공을 나타내기 위해 `bool`을 반환하고, 이를 `got`으로 추출합니다.
 
