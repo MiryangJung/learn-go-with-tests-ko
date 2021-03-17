@@ -6,9 +6,9 @@
 
 * [Install Go](install-go.md)
 * [Hello, World](hello-world.md)
-* [Integers](integers.md)
+* [정수](integers.md)
 * [Iteration](iteration.md)
-* [Arrays and slices](arrays-and-slices.md)
+* [배열과 슬라이스](arrays-and-slices.md)
 * [Structs, methods & interfaces](structs-methods-and-interfaces.md)
 * [Pointers & errors](pointers-and-errors.md)
 * [Maps](maps.md)
