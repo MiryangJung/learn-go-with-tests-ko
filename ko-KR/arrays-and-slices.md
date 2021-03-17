@@ -136,7 +136,7 @@ func TestSum(t *testing.T) {
  ## 테스트를 실행할 최소한의 코드를 작성하고 실패한 테스트 출력을 확인하세요.
  
  여기서의 문제는 둘 중 하나이다.
- - 기존에 존제하던 API의 인수인 `Sum`을 배열대신 슬라이스로 바꾸어 주는 것이다. 만약 우리가 이방법을 사용한다면 우리는 다른 사람의 하루를 망쳤을수도 있습니다. 이는 우리의 다른 테스트들을 컴파일 되지 않도록 하기 때문입니다.
+ - 기존에 존제하던 API의 인수인 `Sum`을 배열대신 슬라이스로 바꾸어 주는 것입니다. 만약 우리가 이방법을 사용한다면 우리는 다른 사람의 하루를 망쳤을수도 있습니다. 이는 우리의 다른 테스트들을 컴파일 되지 않도록 하기 때문입니다.
  - 새로운 함수를 만듭니다.
 
  지금과 같은 경우, 아무도 우리의 함수를 사용하지 않을거기 때문에 두개의 함수를 유지하는것 보다 1개만 가지도록 합시다.
@@ -186,9 +186,7 @@ func TestSum(t *testing.T) {
 }
 ```
 
-당신의 테스트값에 대하여 의문을 갖는것은 중요합니다. 테스트 
-
-It is important to question the value of your tests. It should not be a goal to have as many tests as possible, but rather to have as much confidence as possible in your code base. Having too many tests can turn in to a real problem and it just adds more overhead in maintenance. Every test has a cost.
+당신의 테스트값에 대하여 의문을 갖는것은 중요합니다. 테스트 많이 한다고 좋은것이 아닙니다, 당신에 코드에 자신감을 가지는 것이 더 중요합니다. 많은 양의 테스트는 문제를 낳으며 유지할때 그저 오버헤드를 증가시키기만 합니다. 모든 테스트는 비용입니다.
 
 지금과 같은 경우, 한 함수에 대하여 2개의 테스트를 가지고 있는것은 매우 불필요합니다. 만약 함수가 한가지 크기의 슬라이스로 통과를 한다면, 이는 다른 크기의 슬라이스도 높은 확률로 통과 할수 있다는 뜻입니다(합당한 범위 내에서).
 
@@ -289,10 +287,8 @@ func TestSumAll(t *testing.T) {
 
 ## 통과할 수 있도록 충분한 코드를 작성하세요
 
+우리는 `varags`들을 반복적으로 처리하며, 우리의 `Sum`한수를 사용해서 합을 계산을 한 후 우리가 반환할 슬라이스에 추가해야합니다.
 
-
-What we need to do is iterate over the varargs, calculate the sum using our
-`Sum` function from before and then add it to the slice we will return
 
 ```go
 func SumAll(numbersToSum ...[]int) []int {
@@ -307,23 +303,16 @@ func SumAll(numbersToSum ...[]int) []int {
 }
 ```
 
-Lots of new things to learn!
+우리는 새로 배울것이 아주 많습니다!
 
-There's a new way to create a slice. `make` allows you to create a slice with
-a starting capacity of the `len` of the `numbersToSum` we need to work through.
+슬라이스를 만드는 새로운 방법이 있습니다. `make`함수는 우리가 작업해야할 `numbersToSum`의 `len`만큼의 시작 크기를 가지는 슬라이스를 만들 수 있도록 해줍니다. 당신은 배열에서 `mySlice[N]` 하듯이 슬라이스에서도 인덱스를 사용할 수 있으며, 새로운 값을 `=`를 이용해서  지정해 줄 수 있습니다.
 
-You can index slices like arrays with `mySlice[N]` to get the value out or
-assign it a new value with `=`
-
-The tests should now pass
+이제 테스트는 통과할 것입니다.
 
 ## Refactor
+앞서 말했듯이 슬라이스도 크기가 있습니다. 당신이 크기가 2인 슬라이스에서 `mySlice[10] = 1`를 시도한다면 이것은 _런타임_ 에러가 날것입니다.
 
-As mentioned, slices have a capacity. If you have a slice with a capacity of
-2 and try to do `mySlice[10] = 1` you will get a _runtime_ error.
-
-However, you can use the `append` function which takes a slice and a new value,
-returning a new slice with all the items in it.
+하지만 당신은 슬라이스와 새로운 값을 받고 새로운 값이 들어간 슬라이스를 반환하는 `append`함수를 이용할 수 있습니다.
 
 ```go
 func SumAll(numbersToSum ...[]int) []int {
@@ -335,13 +324,9 @@ func SumAll(numbersToSum ...[]int) []int {
 	return sums
 }
 ```
+위 실행에서는, 우리는 크기를 너무 걱정할 필요가 없습니다. 우리는 비어있는 `sums`라는 슬라이스에 `Sum`함수의 결과값을 vararngs들을 처리할때마다 `append`를 사용할것이기 때문입니다. 더미들의 꼬리란 제일 첫번째인 \("머리"\)를 제외한 나머지것들을 이야기합니다.
 
-In this implementation, we are worrying less about capacity. We start with an
-empty slice `sums` and append to it the result of `Sum` as we work through the varargs.
-
-Our next requirement is to change `SumAll` to `SumAllTails`, where it now
-calculates the totals of the "tails" of each slice. The tail of a collection is
-all the items apart from the first one \(the "head"\)
+우리의 다음 요구사항은 `SumAll` 을 모든 슬라이스의 꼬리들의 합을 계산하는 `SumAllTails`로 바꾸는 것입니다. 
 
 ## 테스트를 먼저 작성하세요
 
@@ -362,7 +347,7 @@ func TestSumAllTails(t *testing.T) {
 
 ## 테스트를 실행할 최소한의 코드를 작성하고 실패한 테스트 출력을 확인하세요.
 
-Rename the function to `SumAllTails` and re-run the test
+함수를  `SumAllTails` 로 이름을 변경하고 테스트를 다시 실행합시다.
 
 `sum_test.go:30: got [3 9] want [2 9]`
 
@@ -379,20 +364,13 @@ func SumAllTails(numbersToSum ...[]int) []int {
 	return sums
 }
 ```
-
-Slices can be sliced! The syntax is `slice[low:high]` If you omit the value on
-one of the sides of the `:` it captures everything to the side of it. In our
-case, we are saying "take from 1 to the end" with `numbers[1:]`. You might want to
-invest some time in writing other tests around slices and experimenting with the
-slice operator so you can be familiar with it.
+슬라이스들도`slice[low:high]`를 통해 잘릴 수 있습니다. 당신이 `:`의 옆에 값을 누락시킨다면, 이것은 그 값부터 끝까지의 값을 가져옵니다. 우리와 같은 경우 "1부터 끝까지 가져와"를 `numbers[1:]`과 같이 표현할 수 있습니다. 당신은 시간을 조금 투자해서 다른 태스트 등을 통하여 슬라이스와 슬라이스 오퍼레이터와 익숙해져도 좋습니다.
 
 ## 리팩토링
 
-Not a lot to refactor this time.
+이번에는 리팩토링 할것이 거의 없습니다.
 
-What do you think would happen if you passed in an empty slice into our
-function? What is the "tail" of an empty slice? What happens when you tell Go to
-capture all elements from `myEmptySlice[1:]`?
+만약 비어있는 슬라이스를 우리의 함수에 넣는다면 어떻게 될것 같습니까? 비어있는 스랄이스의 꼬리는 무엇입니까? 당신이 Go언어에게 `myEmptySlice[1:]`있는 모든 요소들을 달라고 한다면 어떻게 될것 같습니까?
 
 ## 테스트를 먼저 작성하세요
 
@@ -429,8 +407,7 @@ panic: runtime error: slice bounds out of range [recovered]
 
 오, 이런! 우리는 테스트가 _컴파일_ 되었는지 유의해야 합니다. 위 에러는 런타임 에러 입니다. 
 
-Compile time errors are our friend because they help us write software that
-works, runtime errors are our enemies because they affect our users.
+컴파일 타임 에러는 소프트웨어를 만드는데 있어서 도움을 주기때문에 우리의 친구입니다, 하지만 런타임 에러는 우리의 사용자에게 영향을 주기 때문에 우리의적입니다.
 
 ## 통과할 수 있도록 충분한 코드를 작성하세요
 
@@ -478,10 +455,8 @@ func TestSumAllTails(t *testing.T) {
 
 }
 ```
+이 것의 유용한 부작용은 우리의 코드에 type-saftey를 조금 올려준다는 것이다. 만약 어리석은 개발자가 `checkSums(t, got, "dave")`를 사용하여 새로운 태스트를 한다면 컴파일러가 스스로 테스트들을 멈출것 입니다.
 
-A handy side-effect of this is this adds a little type-safety to our code. If
-a silly developer adds a new test with `checkSums(t, got, "dave")` the compiler
-will stop them in their tracks.
 
 ```bash
 $ go test
@@ -508,10 +483,9 @@ $ go test
 
 테스트를 작성하는 것 보다 Go언어를 쉽게 테스트 하는 방법은 Go playground를 이용하는 것입니다. 당신은 많은 것들을 시도해 볼 수 있으며, 당신이 질문을 해야 할 경우 당신의 코드를 쉽게 공유할 수 있습니다. [당신이 슬라이스를 실험 해볼 수 있도록 go playground를 만들어 두었습니다.](https://play.golang.org/p/ICCWcRGIO68)
 
-[여기 예시가 있습니다,](https://play.golang.org/p/bTrRmYfNYCp) 에레이를 슬라이스화하고 이 슬라이스를 변경하는것이 본래의 배열에 어떠한 영향을 주는지; 하지만 `복제`된 슬라이스는 본래의 배열에 영향을 주지 못합니다.
+[여기 예시가 있습니다,](https://play.golang.org/p/bTrRmYfNYCp) 배열을 자르고 이 슬라이스를 변경하는것이 본래의 배열에 어떠한 영향을 주는지 알 수 있습니다.(하지만 `복제`된 슬라이스는 본래의 배열에 영향을 주지 못합니다.)
 
-[또다른 예시가 있습니다,](https://play.golang.org/p/Poth8JS28sc) of why it's a good idea
-to make a copy of a slice after slicing a very large slice.
+[또다른 예시가 있습니다,](https://play.golang.org/p/Poth8JS28sc) 매우 큰 슬라이스를 자르고 난후 그들을 복제해두면 좋은 이유에 대해서 알 수 있습니다.
 
 [for]: ../iteration.md#
 [blog-slice]: https://blog.golang.org/go-slices-usage-and-internals
