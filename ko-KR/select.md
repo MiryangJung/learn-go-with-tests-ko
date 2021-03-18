@@ -69,25 +69,25 @@ func Racer(a, b string) (winner string) {
 
 1. `URL`을 가져 오기 전에 `time.Now()`를 사용하여 기록한다.
 2. 그런 다음 [`http.Get`](https://golang.org/pkg/net/http/#Client.Get)을 사용하여 `URL`의 내용을 가져온다. 이 함수는 [`http.Response`](https://golang.org/pkg/net/http/#Response)와 `error`를 반환하지만 지금까지는이 값에 관심이 없다.
-3. `time.Since`는 시작 시간을 기록하고 차이인 `time.Duration`을 반환한다.
+3. `time.Since`는 시작 시간을 받으며 차이인 `time.Duration`을 반환한다.
 
 일단 이 작업을 완료하면 가장 빠른 시간을 확인하기 위해 단순하게 걸린 시간을 비교한다.
 
 ### 문제점
 
-This may or may not make the test pass for you. The problem is we're reaching out to real websites to test our own logic.
+이렇게 하면 테스트가 통과될 수도 있고 통과되지 못할 수도 있다. 문제는 우리가 우리의 논리를 시험하기 위해 실제 웹사이트에 손을 뻗는다는 것이다.
 
-Testing code that uses HTTP is so common that Go has tools in the standard library to help you test it.
+HTTP를 사용하는 테스트 코드는 매우 일반적이기 때문에 Go는 표준 라이브러리에 테스트하는 데 도움이 되는 도구를 가지고 있다.
 
-In the mocking and dependency injection chapters, we covered how ideally we don't want to be relying on external services to test our code because they can be
+mocking과 의존성 주입 챕터에서는 아래 같은 이유로 외부 서비스에 의존하지 않는 것이 얼마나 이상적일 수 있는지 살펴봤다.
 
-- Slow
-- Flaky
-- Can't test edge cases
+- 느리다.
+- 믿을 수 없다.
+- 엣지 케이스를 테스트할 수 없다.
 
-In the standard library, there is a package called [`net/http/httptest`](https://golang.org/pkg/net/http/httptest/) where you can easily create a mock HTTP server.
+표준 라이브러리에서는 모의 HTTP 서버를 쉽게 만들 수 있는 [`net/http/httptest`](https://golang.org/pkg/net/http/httptest/)라고 불리는 패키지가 있다.
 
-Let's change our tests to use mocks so we have reliable servers to test against that we can control.
+테스트를 mock을 사용하여 제어할 수 있는 안정적인 서버를 확보하도록 변경해보자.
 
 ```go
 func TestRacer(t *testing.T) {
@@ -116,19 +116,19 @@ func TestRacer(t *testing.T) {
 }
 ```
 
-The syntax may look a bit busy but just take your time.
+문법이 조금 복잡해 보일 수 있지만 천천히 해보자.
 
-`httptest.NewServer` takes an `http.HandlerFunc` which we are sending in via an _anonymous function_.
+`httptest.NewServer`는 *익명 함수*를 이용해 보내는 `http.HandlerFunc`를 받는다.
 
-`http.HandlerFunc` is a type that looks like this: `type HandlerFunc func(ResponseWriter, *Request)`.
+`http.HandlerFunc`의 타입은 `type HandlerFunc func(ResponseWriter, *Request)`와 같다.
 
-All it's really saying is it needs a function that takes a `ResponseWriter` and a `Request`, which is not too surprising for an HTTP server.
+실제로는 `ResponseWriter`와 `Request`를 받는 함수가 필요하다는 것이다. 이것은 HTTP 서버에는 그렇게 놀라운 일이 아니다.
 
-It turns out there's really no extra magic here, **this is also how you would write a _real_ HTTP server in Go**. The only difference is we are wrapping it in an `httptest.NewServer` which makes it easier to use with testing, as it finds an open port to listen on and then you can close it when you're done with your test.
+여기에는 추가적인 마법이 없다는 것이 밝혀졌다. **이것은 Go에서 _실제_ HTTP 서버를 작성하는 방법이기도 하다**. 유일한 차이점은 `httptest.NewServer`로 감싸는 것이다. 이것은 요청을 대기할 열린 포트를 찾고 테스트가 끝나면 닫을 수 있기 때문에 테스트와 함께 사용하기가 더 쉽다.
 
-Inside our two servers, we make the slow one have a short `time.Sleep` when we get a request to make it slower than the other one. Both servers then write an `OK` response with `w.WriteHeader(http.StatusOK)` back to the caller.
+두 서버 내에서 느린 서버는 다른 서버보다 느리게 만들라는 요청을 받으면 짧은 `time.Sleep`을 만든다. 그런 다음 두 서버 모두 `w.WriteHeader (http.StatusOK)`와 함께 `OK` 응답을 호출자에게 반환한다.
 
-If you re-run the test it will definitely pass now and should be faster. Play with these sleeps to deliberately break the test.
+테스트를 다시 실행하면 확실히 통과 할 것이며 더 빨라질 것이다. 의도적으로 테스트를 실패시키기 위해 sleep을 사용해라.
 
 ## 리팩토링
 
