@@ -6,6 +6,8 @@ Go 기초부터 TDD 까지 배울 수 있는 아주 좋은 프로젝트라고 �
 
 [Learn Go with Tests Korean Gitbook](https://miryang.gitbook.io/learn-go-with-tests/)
 
+> [golang-korea Slack](https://bit.ly/2olKYdM) 의 __#learn-go-with-tests-ko__ 채널에서 소통 중입니다.
+
 ---
 
 ## 번역 기여
@@ -19,8 +21,10 @@ Go 기초부터 TDD 까지 배울 수 있는 아주 좋은 프로젝트라고 �
 ### 번역 규칙
 
 1. 기술적인 단어나 마땅한 한글 단어가 없을 경우 원본 영문으로 표기해주세요.
-2. `~니다`, `~세요` 를 맺음말로 사용합니다 [예시](https://cloud.google.com/go/docs/setup?hl=ko)
+2. `다` 를 맺음말로 사용합니다 [예시](https://ultimate-go-korean.github.io/translation/)
+    - 예시) 모든 변수는 초기화되어야 한다.
 3. 제목도 한국어로 번역하나 1번 항목을 따라주세요.
+4. 자주 사용되는 단어나 문장은 [구글 시트](https://docs.google.com/spreadsheets/d/1qfcrSu5CWjU3WmAQ_NSRIMxWj7dKtLd7dDmLEz28ThY/edit?usp=sharing) 에서 정리 중입니다.
 
 > 문의나 제안은 편하게 이슈에 등록해주세요.
 
