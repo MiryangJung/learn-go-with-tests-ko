@@ -2,18 +2,18 @@
 
 **[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/MiryangJung/learn-go-with-tests-ko/tree/main/select)**
 
-You have been asked to make a function called `WebsiteRacer` which takes two URLs and "races" them by hitting them with an HTTP GET and returning the URL which returned first. If none of them return within 10 seconds then it should return an `error`.
+HTTP GET으로 두 개의 URL을 가지고 먼저 반환된 URL을 반환하여 "경쟁"하는 `WebSiteRacer`라는 함수를 만들라는 요청을 받았다. 10초 이내에 반환되는 항목이 없으면 오류를 반환해야 한다.
 
-For this, we will be using
+이를 위해 우리는 아래 목록을 사용해야 한다.
 
--   `net/http` to make the HTTP calls.
--   `net/http/httptest` to help us test them.
--   goroutines.
--   `select` to synchronise processes.
+- `net/http`을 사용해 HTTP 호출을 한다.
+- `net/http/httptest`를 사용해 테스트를 한다.
+- 고루틴을 사용한다.
+- 프로세스를 동기화하기 위해 `select` 한다.
 
 ## 테스트부터 작성하기
 
-Let's start with something naive to get us going.
+움직이기 위해 단순한 것부터 시작한다.
 
 ```go
 func TestRacer(t *testing.T) {
@@ -29,7 +29,7 @@ func TestRacer(t *testing.T) {
 }
 ```
 
-We know this isn't perfect and has problems but it will get us going. It's important not to get too hung-up on getting things perfect first time.
+우리는 이것이 완벽하지 않고 문제가 있다는 것을 알고 있지만 그것은 우리를 움직일 것이다. 처음부터 완벽하게 만드는 것에 너무 얽매이지 않는 것이 중요하다.
 
 ## 테스트를 실행해보기
 
@@ -65,13 +65,13 @@ func Racer(a, b string) (winner string) {
 }
 ```
 
-For each URL:
+각 URL에 대해 아래의 작업을 한다.
 
-1. We use `time.Now()` to record just before we try and get the `URL`.
-1. Then we use [`http.Get`](https://golang.org/pkg/net/http/#Client.Get) to try and get the contents of the `URL`. This function returns an [`http.Response`](https://golang.org/pkg/net/http/#Response) and an `error` but so far we are not interested in these values.
-1. `time.Since` takes the start time and returns a `time.Duration` of the difference.
+1. `URL`을 가져 오기 전에 `time.Now()`를 사용하여 기록한다.
+2. 그런 다음 [`http.Get`](https://golang.org/pkg/net/http/#Client.Get)을 사용하여 `URL`의 내용을 가져온다. 이 함수는 [`http.Response`](https://golang.org/pkg/net/http/#Response)와 `error`를 반환하지만 지금까지는이 값에 관심이 없다.
+3. `time.Since`는 시작 시간을 기록하고 차이인 `time.Duration`을 반환한다.
 
-Once we have done this we simply compare the durations to see which is the quickest.
+일단 이 작업을 완료하면 가장 빠른 시간을 확인하기 위해 단순하게 걸린 시간을 비교한다.
 
 ### 문제점
 
@@ -81,9 +81,9 @@ Testing code that uses HTTP is so common that Go has tools in the standard libra
 
 In the mocking and dependency injection chapters, we covered how ideally we don't want to be relying on external services to test our code because they can be
 
--   Slow
--   Flaky
--   Can't test edge cases
+- Slow
+- Flaky
+- Can't test edge cases
 
 In the standard library, there is a package called [`net/http/httptest`](https://golang.org/pkg/net/http/httptest/) where you can easily create a mock HTTP server.
 
@@ -197,8 +197,8 @@ Our refactoring is an improvement and is a reasonable solution given the Go feat
 
 ### 동기화 프로세스
 
--   Why are we testing the speeds of the websites one after another when Go is great at concurrency? We should be able to check both at the same time.
--   We don't really care about _the exact response times_ of the requests, we just want to know which one comes back first.
+- Why are we testing the speeds of the websites one after another when Go is great at concurrency? We should be able to check both at the same time.
+- We don't really care about _the exact response times_ of the requests, we just want to know which one comes back first.
 
 To do this, we're going to introduce a new construct called `select` which helps us synchronise processes really easily and clearly.
 
@@ -346,8 +346,8 @@ Our tests now won't compile because we're not supplying a timeout.
 
 Before rushing in to add this default value to both our tests let's _listen to them_.
 
--   Do we care about the timeout in the "happy" test?
--   The requirements were explicit about the timeout.
+- Do we care about the timeout in the "happy" test?
+- The requirements were explicit about the timeout.
 
 Given this knowledge, let's do a little refactoring to be sympathetic to both our tests and the users of our code.
 
@@ -417,10 +417,10 @@ I added one final check on the first test to verify we don't get an `error`.
 
 ### `select`
 
--   Helps you wait on multiple channels.
--   Sometimes you'll want to include `time.After` in one of your `cases` to prevent your system blocking forever.
+- Helps you wait on multiple channels.
+- Sometimes you'll want to include `time.After` in one of your `cases` to prevent your system blocking forever.
 
 ### `httptest`
 
--   A convenient way of creating test servers so you can have reliable and controllable tests.
--   Using the same interfaces as the "real" `net/http` servers which is consistent and less for you to learn.
+- A convenient way of creating test servers so you can have reliable and controllable tests.
+- Using the same interfaces as the "real" `net/http` servers which is consistent and less for you to learn.
