@@ -10,7 +10,7 @@
 
 `Wallet` 구조체를 만들고 `Bitcoin`을 입금 해보자.
 
-## Write the test first
+## 테스트부터 작성하기
 
 ```go
 func TestWallet(t *testing.T) {
@@ -30,11 +30,11 @@ func TestWallet(t *testing.T) {
 
 [이전 예제](./structs-methods-and-interfaces.md)에서 필드에 접근할 때 직접적으로 필드 이름에 접근했었지만, 우리의 _매우 보안적인 wallet_ 에서는 우리의 내부 상태를 밖으로 노출시키기를 원하지 않는다. 우리는 메서드를 통해서 접근을 제어하기를 원한다.
 
-## Try to run the test
+## 테스트 실행해보기
 
 `./wallet_test.go:7:12: undefined: Wallet`
 
-## Write the minimal amount of code for the test to run and check the failing test output
+## 컴파일이 되는 최소한의 코드를 작성하고, 테스트 실패 출력을 확인하기 
 
 컴파일러는 `Wallet`이 무엇인지 모르기 때문에 알려줘야 한다.
 
@@ -68,7 +68,7 @@ func (w Wallet) Balance() int {
 
 `wallet_test.go:15: got 0 want 10`
 
-## Write enough code to make it pass
+## 테스트를 통과하는 최소한의 코드 작성하기 
 
 우리의 구조체에 상태를 저장하기 위해 일종의 _balance_ 변수가 필요하다. 
 
@@ -176,7 +176,7 @@ func (w *Wallet) Balance() int {
 
 기술적으로는 `Balance`라는 메서드는 포인터 리시버를 사용할 필요가 없고 balance의 복사본을 사용하여도 문제는 없다. 그러나 관습적으로 당신은 메서드 리시버 타입을 하나의 통일성 있게 가져가야 한다.
 
-## Refactor
+## 리팩터링 하기
 
 우리는 비트코인 지갑을 만든다고 했지만 비트코인에 대한 언급은 지금까지 하지 않았다. 우리는 지금까지 `int`를 사용하였는데 그것은 무언가를 세는데 있어서 좋은 타입이기 때문이다.
 
@@ -256,7 +256,7 @@ func (b Bitcoin) String() string {
 
 다음 요구사항은 `Withdraw` 함수를 위한 것 이다.
 
-## Write the test first
+## 테스트부터 작성하기
 
 `Deposit()`에 대부분 반대로 적용한다.
 
@@ -293,11 +293,11 @@ func TestWallet(t *testing.T) {
 }
 ```
 
-## Try to run the test
+## 테스트 실행해보기
 
 `./wallet_test.go:26:9: wallet.Withdraw undefined (type Wallet has no field or method Withdraw)`
 
-## Write the minimal amount of code for the test to run and check the failing test output
+## 컴파일이 되는 최소한의 코드를 작성하고, 테스트 실패 출력을 확인하기 
 
 ```go
 func (w *Wallet) Withdraw(amount Bitcoin) {
@@ -307,7 +307,7 @@ func (w *Wallet) Withdraw(amount Bitcoin) {
 
 `wallet_test.go:33: got 20 BTC want 10 BTC`
 
-## Write enough code to make it pass
+## 테스트를 통과하는 최소한의 코드 작성하기 
 
 ```go
 func (w *Wallet) Withdraw(amount Bitcoin) {
@@ -315,7 +315,7 @@ func (w *Wallet) Withdraw(amount Bitcoin) {
 }
 ```
 
-## Refactor
+## 리팩터링 하기
 
 우리의 테스트에 중복이 있기 때문에, 그것을 리팩토링하여 제거 한다.
 
@@ -354,7 +354,7 @@ func TestWallet(t *testing.T) {
 
 테스트에서 이것을 시도 해보겠다.
 
-## Write the test first
+## 테스트부터 작성하기
 
 ```go
 t.Run("Withdraw insufficient funds", func(t *testing.T) {
@@ -378,13 +378,13 @@ _만약_ 기존의 잔액보다 더 많이 인출을 시도한다면 잔액은 �
 
 `null`처럼 만약 `nil` 값에 접근하려 하면 런타임 패닉을 던지게 됩니다. 이것 매우 안좋습니다! 반드시 nil인지 확인 해야 한다.
 
-## Try and run the test
+## 테스트 실행해보기
 
 `./wallet_test.go:31:25: wallet.Withdraw(Bitcoin(100)) used as value`
 
 위의 말이 아마 좀 확실하지 않아 보일 수 있지만, 이전의 `Withdraw`의 의도는 단지 호출하는 것 이였고, 값을 리턴하지 않았다. 컴파일이 되게 하기 위해서는 이 메서드가 리턴 타입을 가지도록 해주어야 한다.
 
-## Write the minimal amount of code for the test to run and check the failing test output
+## 컴파일이 되는 최소한의 코드를 작성하고, 테스트 실패 출력을 확인하기 
 
 ```go
 func (w *Wallet) Withdraw(amount Bitcoin) error {
@@ -395,7 +395,7 @@ func (w *Wallet) Withdraw(amount Bitcoin) error {
 
 다시, 단지 컴파일러를 만족시키는 적당한 코드를 작성하는 것이 매우 중요하다. `Withdraw` 메서드를 `error`를 리턴하도록 수정하고 지금 부터는 _어떤 것_ 을 리턴해야하기 때문에 일단 `nil`을 리턴하도록 해보자.
 
-## Write enough code to make it pass
+## 테스트를 통과하는 최소한의 코드 작성하기 
 
 ```go
 func (w *Wallet) Withdraw(amount Bitcoin) error {
@@ -413,7 +413,7 @@ func (w *Wallet) Withdraw(amount Bitcoin) error {
 
 `errors.New`는 당신이 작성한 메세지와 함께 새로운 `error`를 생성하여 준다.
 
-## Refactor
+## 리팩터링 하기
 
 에러 체크를 하는데 있어 테스트를 좀 더 명확하게 읽을 수 있도록 빠르게 테스트 헬퍼(helper)를 만들어 준다.
 
@@ -443,7 +443,7 @@ t.Run("Withdraw insufficient funds", func(t *testing.T) {
 
 에러가 궁극적으로 유저에게 전달 된다고 가정하면, 단지 에러가 존재하게 두는 것 보다는 테스트에서 어떤 종류의 메세지라도 assert 하도록 개선해야 한다.
 
-## Write the test first
+## 테스트부터 작성하기
 
 helper에서 `string`을 비교하도록 업데이트 한다.
 
@@ -475,11 +475,11 @@ t.Run("Withdraw insufficient funds", func(t *testing.T) {
 
 우리는 `t.Fatal`를 사용하였는데 이것은 불리게 된다면 테스트를 중지 한다. 주위에 하나도 없는 것이 아니라면, 반환된 오류에 대해 더이상 assertions을 하게 하고 싶지 않기 때문이다. 이것이 없다면 테스트는 다음 스텝으로 계속 진행되고 nil 포인터에 의해 패닉이 일어난다.
 
-## Try to run the test
+## 테스트 실행해보기
 
 `wallet_test.go:61: got err 'oh no' want 'cannot withdraw, insufficient funds'`
 
-## Write enough code to make it pass
+## 테스트를 통과하는 최소한의 코드 작성하기 
 
 ```go
 func (w *Wallet) Withdraw(amount Bitcoin) error {
@@ -493,7 +493,7 @@ func (w *Wallet) Withdraw(amount Bitcoin) error {
 }
 ```
 
-## Refactor
+## 리팩터링 하기
 
 테스트 코드와 `Withdraw` 코드 모두 에러 메세지를 포함하고 있어 중복이 있다.
 
@@ -572,7 +572,7 @@ func assertError(t testing.TB, got error, want error) {
 
 테스트의 다른 특징으로는 테스트를 통하여 우리가 _실제_ 코드의 사용법을 이해하도록 도와주고 그래서 코드를 공감할 수 있도록 만들어준다. 여기서 보듯이 개발자는 간단히 우리의 코드를 호출하고 `ErrInsufficientFunds`와 동일한지 확인하고 적절히 행동하면 된다.
 
-### Unchecked errors
+### 확인하지 않은 에러
 
 Go 컴파일러가 많은 것을 도와주지만, 때때로 당신이 놓치고 에러 핸들링하기 쉽지 않은 것들이 있다. 
 
@@ -645,7 +645,7 @@ func assertError(t testing.TB, got error, want error) {
 }
 ```
 
-## Wrapping up
+## 정리
 
 ### 포인터
 
