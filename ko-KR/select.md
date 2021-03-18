@@ -132,7 +132,7 @@ func TestRacer(t *testing.T) {
 
 ## 리팩토링
 
-We have some duplication in both our production code and test code.
+프로덕션 코드와 테스트 코드 모두에 약간의 중복이 있다.
 
 ```go
 func Racer(a, b string) (winner string) {
@@ -153,7 +153,7 @@ func measureResponseTime(url string) time.Duration {
 }
 ```
 
-This DRY-ing up makes our `Racer` code a lot easier to read.
+이런 건조(DRY-ing up)는 `Racer` 코드를 훨씬 쉽게 읽을 수 있게 만든다.
 
 ```go
 func TestRacer(t *testing.T) {
@@ -183,24 +183,24 @@ func makeDelayedServer(delay time.Duration) *httptest.Server {
 }
 ```
 
-We've refactored creating our fake servers into a function called `makeDelayedServer` to move some uninteresting code out of the test and reduce repetition.
+우리는 가짜 서버를 `makeDelayedServer`라는 함수로 리팩토링 하여 테스트에서 흥미롭지 않은 코드를 옮기고 반복을 줄였다.
 
 ### `defer`
 
-By prefixing a function call with `defer` it will now call that function _at the end of the containing function_.
+함수 호출 앞에 `defer`를 붙이면 해당 함수를 _포함하는 함수의 끝에서_ 호출합니다.
 
-Sometimes you will need to cleanup resources, such as closing a file or in our case closing a server so that it does not continue to listen to a port.
+때로는 파일을 닫거나 서버를 닫는 것과 같은 리소스를 정리하여 포트가 계속 수신하지 않도록 해야 한다.
 
-You want this to execute at the end of the function, but keep the instruction near where you created the server for the benefit of future readers of the code.
+함수가 끝날 때 실행되기를 원하지만, 나중에 코드를 읽는 사람을 위해 서버를 생성한 위치 근처에 명령어를 보관한다.
 
-Our refactoring is an improvement and is a reasonable solution given the Go features covered so far, but we can make the solution simpler.
+리팩토링은 개선된 것이며 지금까지 다루었던 Go 기능을 고려할 때 합리적인 해결책이지만 해결책을 더 간단하게 만들 수 있다.
 
 ### 동기화 프로세스
 
-- Why are we testing the speeds of the websites one after another when Go is great at concurrency? We should be able to check both at the same time.
-- We don't really care about _the exact response times_ of the requests, we just want to know which one comes back first.
+- Go가 동시성이 뛰어나지만 웹 사이트의 속도를 차례로 테스트하는 이유는 무엇일까? 두 가지를 동시에 확인할 수 있어야한다.
+- 우리는 요청의 *정확한 응답 시간*에 대해 신경 쓰지 않고 어떤 것이 먼저 돌아 오는지 알고 싶다.
 
-To do this, we're going to introduce a new construct called `select` which helps us synchronise processes really easily and clearly.
+이를 위해 동기화 프로세스를 정말 쉽고 명확하게 하는 데 도움이 되는 select라는 새로운 구조를 도입할 것이다.
 
 ```go
 func Racer(a, b string) (winner string) {
@@ -224,14 +224,13 @@ func ping(url string) chan struct{} {
 
 #### `ping`
 
-We have defined a function `ping` which creates a `chan struct{}` and returns it.
+`chan struct {}`를 생성하고 그것을 반환하는 `ping` 함수를 정의했다.
 
-In our case, we don't _care_ what type is sent to the channel, _we just want to signal we are done_ and closing the channel works perfectly!
+이 경우 채널에 어떤 타입이 전송되는지는 _신경_ 쓰지 않고 _단지 완료되었음을 알리고_ 채널을 닫으면 완벽하게 작동한다!
 
-Why `struct{}` and not another type like a `bool`? Well, a `chan struct{}` is the smallest data type available from a memory perspective so we
-get no allocation versus a `bool`. Since we are closing and not sending anything on the chan, why allocate anything?
+왜 `bool`과 같은 다른 타입이 아닌 `struct {}`일까? `chan struct {}`는 메모리 관점에서 사용할 수 있는 가장 작은 데이터 타입이므로 `bool`에 비해 할당이 없다. 우리가 닫고 채널에 아무것도 보내지 않는데 왜 할당해야 할까요?
 
-Inside the same function, we start a goroutine which will send a signal into that channel once we have completed `http.Get(url)`.
+동일한 함수 내에서 한번 `http.Get(url)`을 완료하면 해당 채널로 신호를 보내는 고루틴을 시작한다.
 
 ##### 항상 `make` 함수로 채널 만들기
 
