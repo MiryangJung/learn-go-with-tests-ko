@@ -1,6 +1,6 @@
-# 선택 (Select)
+# 선택
 
-**[이 챕터의 모든 코드는 여기에서 확인할 수 있습니다.](https://github.com/MiryangJung/learn-go-with-tests-ko/tree/main/select)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/MiryangJung/learn-go-with-tests-ko/tree/main/select)**
 
 You have been asked to make a function called `WebsiteRacer` which takes two URLs and "races" them by hitting them with an HTTP GET and returning the URL which returned first. If none of them return within 10 seconds then it should return an `error`.
 
@@ -11,7 +11,7 @@ For this, we will be using
 -   goroutines.
 -   `select` to synchronise processes.
 
-## 테스트 먼저 작성하세요.
+## 테스트부터 작성하기
 
 Let's start with something naive to get us going.
 
@@ -31,11 +31,11 @@ func TestRacer(t *testing.T) {
 
 We know this isn't perfect and has problems but it will get us going. It's important not to get too hung-up on getting things perfect first time.
 
-## 테스트를 시도해보세요.
+## 테스트를 실행해보기
 
 `./racer_test.go:14:9: undefined: Racer`
 
-## 테스트를 실행할 최소한의 코드를 작성하고 실패한 테스트 출력을 확인하세요.
+## 테스트를 실행할 최소한의 코드를 작성하고 실패한 테스트 출력을 확인하기
 
 ```go
 func Racer(a, b string) (winner string) {
@@ -45,7 +45,7 @@ func Racer(a, b string) (winner string) {
 
 `racer_test.go:25: got '', want 'http://www.quii.co.uk'`
 
-## 통과할 만큼 충분한 코드를 작성하세요.
+## 통과할 만큼 충분한 코드를 작성하기
 
 ```go
 func Racer(a, b string) (winner string) {
@@ -233,7 +233,7 @@ get no allocation versus a `bool`. Since we are closing and not sending anything
 
 Inside the same function, we start a goroutine which will send a signal into that channel once we have completed `http.Get(url)`.
 
-##### 항상 `make` 함수로 채널을 만드세요.
+##### 항상 `make` 함수로 채널 만들기
 
 Notice how we have to use `make` when creating a channel; rather than say `var ch chan struct{}`. When you use `var` the variable will be initialised with the "zero" value of the type. So for `string` it is `""`, `int` it is 0, etc.
 
@@ -255,7 +255,7 @@ After these changes, the intent behind our code is very clear and the implementa
 
 Our final requirement was to return an error if `Racer` takes longer than 10 seconds.
 
-## 테스트 먼저 작성하세요.
+## 테스트부터 작성하기
 
 ```go
 t.Run("returns an error if a server doesn't respond within 10s", func(t *testing.T) {
@@ -275,11 +275,11 @@ t.Run("returns an error if a server doesn't respond within 10s", func(t *testing
 
 We've made our test servers take longer than 10s to return to exercise this scenario and we are expecting `Racer` to return two values now, the winning URL (which we ignore in this test with `_`) and an `error`.
 
-## 테스트를 시도해보세요.
+## 테스트를 실행해보기
 
 `./racer_test.go:37:10: assignment mismatch: 2 variables but 1 values`
 
-## 테스트를 실행할 최소한의 코드를 작성하고 실패한 테스트 출력을 확인하세요.
+## 테스트를 실행할 최소한의 코드를 작성하고 실패한 테스트 출력을 확인하기
 
 ```go
 func Racer(a, b string) (winner string, error error) {
@@ -304,7 +304,7 @@ If you run it now after 11 seconds it will fail.
         racer_test.go:40: expected an error but didn't get one
 ```
 
-## 통과할 만큼 충분한 코드를 작성하세요.
+## 통과할 만큼 충분한 코드를 작성하기
 
 ```go
 func Racer(a, b string) (winner string, error error) {
