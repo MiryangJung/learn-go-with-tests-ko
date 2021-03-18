@@ -1,14 +1,14 @@
-# Pointers & errors
+#  포인터 & 에러
 
-**[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/main/pointers)**
+**[이 챕터에서 사용되는 모든 코드는 여기서 찾을 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/pointers)**
 
-We learned about structs in the last section which let us capture a number of values related around a concept.
+지난 번 섹션에서 저희는 한 개념안에 여러 많은 수의 값을 포함 할 수 있는 구조체에 대해서 배웠다.
 
-At some point you may wish to use structs to manage state, exposing methods to let users change the state in a way that you can control.
+어떤 상황에서는 구조체를 상태를 관리하는데 있어 사용할 수 있고, 다른 방법으로는  유저가 제어하는데로 상태를 바꿀 수 있도록 하는 메서드를 노출시키는 방법이 있다.   
 
-**Fintech loves Go** and uhhh bitcoins? So let's show what an amazing banking system we can make.
+**핀테크는 Go를 좋아한다** 그리고 음.. 비트코인도? 따라서 우리가 얼마나 대단한 은행 시스템을 만들 수 있는지 보일 것이다.
 
-Let's make a `Wallet` struct which lets us deposit `Bitcoin`.
+`Wallet` 구조체를 만들고 `Bitcoin`을 입금 해보자.
 
 ## Write the test first
 
@@ -28,7 +28,7 @@ func TestWallet(t *testing.T) {
 }
 ```
 
-In the [previous example](./structs-methods-and-interfaces.md) we accessed fields directly with the field name, however in our _very secure wallet_ we don't want to expose our inner state to the rest of the world. We want to control access via methods.
+[이전 예제](./structs-methods-and-interfaces.md)에서 필드에 접근할 때 직접적으로 필드 이름에 접근했었지만, 우리의 _매우 보안적인 wallet_ 에서는 우리의 내부 상태를 밖으로 노출시키기를 원하지 않는다. 우리는 메서드를 통해서 접근을 제어하기를 원한다.
 
 ## Try to run the test
 
@@ -36,23 +36,22 @@ In the [previous example](./structs-methods-and-interfaces.md) we accessed field
 
 ## Write the minimal amount of code for the test to run and check the failing test output
 
-The compiler doesn't know what a `Wallet` is so let's tell it.
+컴파일러는 `Wallet`이 무엇인지 모르기 때문에 알려줘야 한다.
 
 ```go
 type Wallet struct { }
 ```
 
-Now we've made our wallet, try and run the test again
+이제 우리의 wallet을 만들었으니, 테스트를 실행시켜서 확인한다.
 
 ```go
 ./wallet_test.go:9:8: wallet.Deposit undefined (type Wallet has no field or method Deposit)
 ./wallet_test.go:11:15: wallet.Balance undefined (type Wallet has no field or method Balance)
 ```
 
-We need to define these methods.
+우리는 위의 메서드를 정의해야 한다.
 
-Remember to only do enough to make the tests run. We need to make sure our test fails correctly with a clear error message.
-
+해야할 일은 테스트가 충분히 동작하도록 하는 것임을 기억해야한다. 우리의 테스트가 깔끔한 오류 메세지와 함께 정확하게 실패하도록 해야 한다.
 ```go
 func (w Wallet) Deposit(amount int) {
 
@@ -63,15 +62,15 @@ func (w Wallet) Balance() int {
 }
 ```
 
-If this syntax is unfamiliar go back and read the structs section.
+만약 이 문법이 익숙하지 않다면 이전 섹션으로 돌아가서 구조체에 대해 다시 읽으시길 바란다.
 
-The tests should now compile and run
+이제 테스트는 컴파일되어 아래와 같이 동작한다.
 
 `wallet_test.go:15: got 0 want 10`
 
 ## Write enough code to make it pass
 
-We will need some kind of _balance_ variable in our struct to store the state
+우리의 구조체에 상태를 저장하기 위해 일종의 _balance_ 변수가 필요하다. 
 
 ```go
 type Wallet struct {
@@ -79,11 +78,11 @@ type Wallet struct {
 }
 ```
 
-In Go if a symbol (so variables, types, functions et al) starts with a lowercase symbol then it is private _outside the package it's defined in_.
+Go에서는 만약 symbol(변수, 타입, 함수 등)이 소문자로 시작한다면 _그것이 정의된 패키지 밖에서는_ private 하다.
 
-In our case we want our methods to be able to manipulate this value but no one else.
+우리의 예제에서 우리의 메서드만 이 변수를 조작할 수 있도록 하고 다른 것은 조작하지 못하도록 하길 원한다.
 
-Remember we can access the internal `balance` field in the struct using the "receiver" variable.
+우리는 내부 `balance` 필드에 구조체 안에 있는 "recever" 변수를 통해서만 접근 할 수있다는 것을 기억 해야한다.
 
 ```go
 func (w Wallet) Deposit(amount int) {
@@ -95,21 +94,21 @@ func (w Wallet) Balance() int {
 }
 ```
 
-With our career in fintech secured, run our tests and bask in the passing test
+핀테크에서의 경력이 유지 될 수 있도록 보안에 주의한 뒤, 테스트를 실행하고 통과하는 테스트를 즐기도록 하자.
 
 `wallet_test.go:15: got 0 want 10`
 
 ### ????
 
-Well this is confusing, our code looks like it should work, we add the new amount onto our balance and then the balance method should return the current state of it.
+혼란스럽게도, 우리의 코드는 제대로 작동하는 것처럼 보일 수 있는데, 우리가 잔액에 새로운 비용을 추가한다면 위 balance 메서드는 현재 잔액의 상태를 반환해야 한다.
 
-In Go, **when you call a function or a method the arguments are** _**copied**_.
+Go 에서는, **함수나 메서드를 호출하는 경우 인자(arguments) 는** _**복사된다**_.
 
-When calling `func (w Wallet) Deposit(amount int)` the `w` is a copy of whatever we called the method from.
+다음 함수를 호출 할 때 `func (w Wallet) Deposit(amount int)`에 `w`는 메서드를 호출하는 어떤 것의 복사본이다.
 
-Without getting too computer-sciency, when you create a value - like a wallet, it is stored somewhere in memory. You can find out what the _address_ of that bit of memory with `&myVal`.
+너무 컴퓨터 과학적으로 깊게 들어가지 않고 설명하면, 당신이 값을 생성하면 - wallet 같이, 그것은 메모리 어딘가에 저장됩니다. 당신은 `&myVal`와 같은 방식으로 값의 메모리 주소 bit를 찾을 수 있다.
 
-Experiment by adding some prints to your code
+당신의 코드에 프린트문을 추가하여 실험해보자.
 
 ```go
 func TestWallet(t *testing.T) {
@@ -137,18 +136,18 @@ func (w Wallet) Deposit(amount int) {
 }
 ```
 
-The `\n` escape character, prints new line after outputting the memory address. We get the pointer to a thing with the address of symbol; `&`.
+이스케이프 문자 `\n`는 , 메모리 주소를 아웃풋으로 출력한 뒤 줄 바꿈을 해준다. `&`라는 심볼의 주소로 어떤 것에 대한 포인터를 얻는다.
 
-Now re-run the test
+이제 테스트를 새로 실행시킨다.
 
 ```text
 address of balance in Deposit is 0xc420012268
 address of balance in test is 0xc420012260
 ```
 
-You can see that the addresses of the two balances are different. So when we change the value of the balance inside the code, we are working on a copy of what came from the test. Therefore the balance in the test is unchanged.
+두 잔액의 주소 값이 다른 것을 확인 할 수 있습니다. 따라서 우리가 만약 코드 안에서 잔액 값을 바꾸어 주는 것은 테스트로 부터 받은 복사본에 작업하는 것이다. 결국 테스트에서는 잔액 값이 변화하지 않는다.
 
-We can fix this with _pointers_. [Pointers](https://gobyexample.com/pointers) let us _point_ to some values and then let us change them. So rather than taking a copy of the Wallet, we take a pointer to the wallet so we can change it.
+우리는 이것을 _포인터_ 로 해결 할 수 있다. [포인터](https://gobyexample.com/pointers)는 특정한 값을 _가리키고_ 따라서 그 값을 변화 시킬 수 있다. 따라서 Wallet의 복사본을 갖지 않고, 우리는 wallet을 가리키는 포인터를 얻게 되어 값을 바꿀 수 있다.
 
 ```go
 func (w *Wallet) Deposit(amount int) {
@@ -160,11 +159,11 @@ func (w *Wallet) Balance() int {
 }
 ```
 
-The difference is the receiver type is `*Wallet` rather than `Wallet` which you can read as "a pointer to a wallet".
+리시버 타입의 차이는 `Wallet`이 아니라 `*Wallet`이라고 쓰고 이것은 "wallet에 대한 포인터"라고 얘기할 수 있다.
 
-Try and re-run the tests and they should pass.
+새로 테스트를 재실행 해보면 통과 할 것이다.
 
-Now you might wonder, why did they pass? We didn't dereference the pointer in the function, like so:
+이게 왜 통과했지? 아래를 보면 우리는 포인터의 역참조(dereference)를 함수에서 사용해야 하는 것 아닌가하고 의문을 가질 수 있다.
 
 ```go
 func (w *Wallet) Balance() int {
@@ -172,20 +171,20 @@ func (w *Wallet) Balance() int {
 }
 ```
 
-and seemingly addressed the object directly. In fact, the code above using `(*w)` is absolutely valid. However, the makers of Go deemed this notation cumbersome, so the language permits us to write `w.balance`, without explicit dereference.
-These pointers to structs even have their own name: _struct pointers_ and they are [automatically dereferenced](https://golang.org/ref/spec#Method_values).
+우린 객체를 직접적으로 접근하여 다룬것처럼 보인다. 사실, 위의 `(*w)`를 사용한 코드는 완벽하게 타당하다. 그러나, Go 언어의 개발자들은 이 표기가 쓰기 귀찮은 것이라고 생각했고 그래서 Go에서는 특별한 역참조에 대한 명시 없이 `w.balance`라고 쓰는 것을 허용했다. 
+이 구조체에 대한 포인터는 다음과 같이: _구조체 포인터_ 라고 불리고 [자동 역참조](https://golang.org/ref/spec#Method_values)가 된다.
 
-Technically you do not need to change `Balance` to use a pointer receiver as taking a copy of the balance is fine. However by convention you should keep your method receiver types to be the same for consistency.
+기술적으로는 `Balance`라는 메서드는 포인터 리시버를 사용할 필요가 없고 balance의 복사본을 사용하여도 문제는 없다. 그러나 관습적으로 당신은 메서드 리시버 타입을 하나의 통일성 있게 가져가야 한다.
 
 ## Refactor
 
-We said we were making a Bitcoin wallet but we have not mentioned them so far. We've been using `int` because they're a good type for counting things!
+우리는 비트코인 지갑을 만든다고 했지만 비트코인에 대한 언급은 지금까지 하지 않았다. 우리는 지금까지 `int`를 사용하였는데 그것은 무언가를 세는데 있어서 좋은 타입이기 때문이다.
 
-It seems a bit overkill to create a `struct` for this. `int` is fine in terms of the way it works but it's not descriptive.
+`구조체`를 추가적으로 생성해 사용하는 것은 좀 과하다고 생각할 수 있다. `int`만으로 동작하는데 있어서는 문제가 없지만 잘 설명해주지 못하는 점이 있다.
 
-Go lets you create new types from existing ones.
+기존의 존재하는 타입으로 새로운 타입을 만들어 주자.
 
-The syntax is `type MyName OriginalType`
+문법은 다음과 같다 `type MyName OriginalType`
 
 ```go
 type Bitcoin int
@@ -220,19 +219,19 @@ func TestWallet(t *testing.T) {
 }
 ```
 
-To make `Bitcoin` you just use the syntax `Bitcoin(999)`.
+`Bitcoin`을 만들기 위해서는 `Bitcoin(999)`와 같이 사용하면 된다.
 
-By doing this we're making a new type and we can declare _methods_ on them. This can be very useful when you want to add some domain specific functionality on top of existing types.
 
-Let's implement [Stringer](https://golang.org/pkg/fmt/#Stringer) on Bitcoin
+이렇게 하므로 우리는 새로운 타입을 만들어 그 타입 위에 _메서드들_을 정의 할 수 있다. 이것은 존재하는 타입에서 당신이 원하는 어떤 특정 도메인에 특화된 기능을 추가하는 경우 유용하다.
+
+비트코인에 [Stringer](https://golang.org/pkg/fmt/#Stringer)를 구현해 보자.
 
 ```go
 type Stringer interface {
         String() string
 }
 ```
-
-This interface is defined in the `fmt` package and lets you define how your type is printed when used with the `%s` format string in prints.
+위 인터페이스는 `fmt` 패키지에 정의되어 있고 프린트에서 `%s` 포맷의 스트링을 사용하는 경우 당신의 타입이 어떻게 출력 될지 정의 해준다.
 
 ```go
 func (b Bitcoin) String() string {
@@ -240,27 +239,26 @@ func (b Bitcoin) String() string {
 }
 ```
 
-As you can see, the syntax for creating a method on a type alias is the same as it is on a struct.
+위에서 보이 듯이, 타입 별칭(type alias)에서 새로운 메서드를 생성하는 문법과 구조체에서의 경우가 똑같은 것을 알 수 있다.
 
-Next we need to update our test format strings so they will use `String()` instead.
+다음은 우리의 테스트에서 `String()`을 사용하도록 포맷 스트링을 바꿔준다.
 
 ```go
     if got != want {
         t.Errorf("got %s want %s", got, want)
     }
 ```
-
-To see this in action, deliberately break the test so we can see it
+이것의 결과를 보기 위해, 일부러 테스트를 실패하도록 하면 아래의 결과를 확인 할 수 있다.
 
 `wallet_test.go:18: got 10 BTC want 20 BTC`
 
-This makes it clearer what's going on in our test.
+이것은 우리의 테스트가 어떻게 진행되고 있는지 명확하게 보여준다.
 
-The next requirement is for a `Withdraw` function.
+다음 요구사항은 `Withdraw` 함수를 위한 것 이다.
 
 ## Write the test first
 
-Pretty much the opposite of `Deposit()`
+`Deposit()`에 대부분 반대로 적용한다.
 
 ```go
 func TestWallet(t *testing.T) {
@@ -319,7 +317,7 @@ func (w *Wallet) Withdraw(amount Bitcoin) {
 
 ## Refactor
 
-There's some duplication in our tests, lets refactor that out.
+우리의 테스트에 중복이 있기 때문에, 그것을 리팩토링하여 제거 한다.
 
 ```go
 func TestWallet(t *testing.T) {
@@ -348,13 +346,13 @@ func TestWallet(t *testing.T) {
 }
 ```
 
-What should happen if you try to `Withdraw` more than is left in the account? For now, our requirement is to assume there is not an overdraft facility.
+만약 `Withdraw`를 계좌에 남아있는 잔액보다 많이 시도하게 된다면 어떻게 될까?  지금까지는, 우리의 요구사항은 초과 인출 시설에 대해서는 가정하지 않았다.
 
-How do we signal a problem when using `Withdraw` ?
+`Withdraw`를 사용하다 문제가 생긴 경우 우리는 어떻게 알려야 할까?
 
-In Go, if you want to indicate an error it is idiomatic for your function to return an `err` for the caller to check and act on.
+만약 에러를 알려주길 원한다면 Go에서는 관용적으로 함수에서 리턴 값으로 `err`를 보내주어 호출자가 확인하고 행동 할 수 있도록 해준다. 
 
-Let's try this out in a test.
+테스트에서 이것을 시도 해보겠다.
 
 ## Write the test first
 
@@ -372,19 +370,19 @@ t.Run("Withdraw insufficient funds", func(t *testing.T) {
 })
 ```
 
-We want `Withdraw` to return an error _if_ you try to take out more than you have and the balance should stay the same.
+_만약_ 기존의 잔액보다 더 많이 인출을 시도한다면 잔액은 기존과 같게 유지하고 `Withdraw`에서는 에러를 리턴하도록 해야 한다.
 
-We then check an error has returned by failing the test if it is `nil`.
+그래서 우리는 만약 `nil`이 리턴 된다면 테스트가 실패하도록 하여 에러를 체크할 것이다.
 
-`nil` is synonymous with `null` from other programming languages. Errors can be `nil` because the return type of `Withdraw` will be `error`, which is an interface. If you see a function that takes arguments or returns values that are interfaces, they can be nillable.
+`nil`은 다른 프로그래밍 언어에서의 `null`과 동의어다. 에러는 `nil`이 될 수 있는데, 그 이유는 `Withdraw`의 리턴 타입이 `error`이고 이것은 인터페이스이기 때문이다. 만약 인터페이스를 인자나 리턴 값으로 받는 함수를 보게 되면 이것은 `nil`이 될 수 있다(nillable).  
 
-Like `null` if you try to access a value that is `nil` it will throw a **runtime panic**. This is bad! You should make sure that you check for nils.
+`null`처럼 만약 `nil` 값에 접근하려 하면 런타임 패닉을 던지게 됩니다. 이것 매우 안좋습니다! 반드시 nil인지 확인 해야 한다.
 
 ## Try and run the test
 
 `./wallet_test.go:31:25: wallet.Withdraw(Bitcoin(100)) used as value`
 
-The wording is perhaps a little unclear, but our previous intent with `Withdraw` was just to call it, it will never return a value. To make this compile we will need to change it so it has a return type.
+위의 말이 아마 좀 확실하지 않아 보일 수 있지만, 이전의 `Withdraw`의 의도는 단지 호출하는 것 이였고, 값을 리턴하지 않았다. 컴파일이 되게 하기 위해서는 이 메서드가 리턴 타입을 가지도록 해주어야 한다.
 
 ## Write the minimal amount of code for the test to run and check the failing test output
 
@@ -395,7 +393,7 @@ func (w *Wallet) Withdraw(amount Bitcoin) error {
 }
 ```
 
-Again, it is very important to just write enough code to satisfy the compiler. We correct our `Withdraw` method to return `error` and for now we have to return _something_ so let's just return `nil`.
+다시, 단지 컴파일러를 만족시키는 적당한 코드를 작성하는 것이 매우 중요하다. `Withdraw` 메서드를 `error`를 리턴하도록 수정하고 지금 부터는 _어떤 것_ 을 리턴해야하기 때문에 일단 `nil`을 리턴하도록 해보자.
 
 ## Write enough code to make it pass
 
@@ -411,13 +409,13 @@ func (w *Wallet) Withdraw(amount Bitcoin) error {
 }
 ```
 
-Remember to import `errors` into your code.
+코드에서 `errors`를 import 해주는 것을 기억해야 한다.
 
-`errors.New` creates a new `error` with a message of your choosing.
+`errors.New`는 당신이 작성한 메세지와 함께 새로운 `error`를 생성하여 준다.
 
 ## Refactor
 
-Let's make a quick test helper for our error check just to help our test read clearer
+에러 체크를 하는데 있어 테스트를 좀 더 명확하게 읽을 수 있도록 빠르게 테스트 헬퍼(helper)를 만들어 준다.
 
 ```go
 assertError := func(t testing.TB, err error) {
@@ -428,7 +426,7 @@ assertError := func(t testing.TB, err error) {
 }
 ```
 
-And in our test
+그리고 우리의 테스트에서 
 
 ```go
 t.Run("Withdraw insufficient funds", func(t *testing.T) {
@@ -441,13 +439,13 @@ t.Run("Withdraw insufficient funds", func(t *testing.T) {
 })
 ```
 
-Hopefully when returning an error of "oh no" you were thinking that we _might_ iterate on that because it doesn't seem that useful to return.
+"oh no"라는 에러를 리턴하는 것은 별로 유용하지 않기 때문에 우리는 계속 에러를 반복할 수 있다는 것을 생각해야 한다. 
 
-Assuming that the error ultimately gets returned to the user, let's update our test to assert on some kind of error message rather than just the existence of an error.
+에러가 궁극적으로 유저에게 전달 된다고 가정하면, 단지 에러가 존재하게 두는 것 보다는 테스트에서 어떤 종류의 메세지라도 assert 하도록 개선해야 한다.
 
 ## Write the test first
 
-Update our helper for a `string` to compare against.
+helper에서 `string`을 비교하도록 업데이트 한다.
 
 ```go
 assertError := func(t testing.TB, got error, want string) {
@@ -462,7 +460,7 @@ assertError := func(t testing.TB, got error, want string) {
 }
 ```
 
-And then update the caller
+그 다음 호출자를 업데이트 한다.
 
 ```go
 t.Run("Withdraw insufficient funds", func(t *testing.T) {
@@ -475,7 +473,7 @@ t.Run("Withdraw insufficient funds", func(t *testing.T) {
 })
 ```
 
-We've introduced `t.Fatal` which will stop the test if it is called. This is because we don't want to make any more assertions on the error returned if there isn't one around. Without this the test would carry on to the next step and panic because of a nil pointer.
+우리는 `t.Fatal`를 사용하였는데 이것은 불리게 된다면 테스트를 중지 한다. 주위에 하나도 없는 것이 아니라면, 반환된 오류에 대해 더이상 assertions을 하게 하고 싶지 않기 때문이다. 이것이 없다면 테스트는 다음 스텝으로 계속 진행되고 nil 포인터에 의해 패닉이 일어난다.
 
 ## Try to run the test
 
@@ -497,11 +495,11 @@ func (w *Wallet) Withdraw(amount Bitcoin) error {
 
 ## Refactor
 
-We have duplication of the error message in both the test code and the `Withdraw` code.
+테스트 코드와 `Withdraw` 코드 모두 에러 메세지를 포함하고 있어 중복이 있다.
 
-It would be really annoying for the test to fail if someone wanted to re-word the error and it's just too much detail for our test. We don't _really_ care what the exact wording is, just that some kind of meaningful error around withdrawing is returned given a certain condition.
+누군가가 테스트 메세지를 바꾸길 원하다면 테스트를 실패를 실패하도록 하는 것은 매우 귀찮은 일이 될 것이고 이것은 테스트에서 너무 디테일한 부분이다. 우리는 정확히 어떤 단어인지 _정말로_ 관심이 없고, 특정한 상황에서 인출을 하는 경우, 일종의 의미 있는 에러 메세지를 반환하여 주면 된다.
 
-In Go, errors are values, so we can refactor it out into a variable and have a single source of truth for it.
+Go에서는 에러는 값이기 때문에, 우리는 에러를 변수로 리팩토링 할 수 있어 하나의 값으로 에러를 가지고 갈 수 있다.
 
 ```go
 var ErrInsufficientFunds = errors.New("cannot withdraw, insufficient funds")
@@ -517,11 +515,11 @@ func (w *Wallet) Withdraw(amount Bitcoin) error {
 }
 ```
 
-The `var` keyword allows us to define values global to the package.
+`var` 키워드는 패키지에서 전역으로 변수를 선언 할 수 있도록 허용한다. 
 
-This is a positive change in itself because now our `Withdraw` function looks very clear.
+이제 우리의 `Withdraw` 함수는 매우 깔끔해졌기 때문에 이것은 그 자체로 매우 긍정적인 변화이다.
 
-Next we can refactor our test code to use this value instead of specific strings.
+다음은 테스트 코드에서 특정한 스트링을 사용하는 대신 이 값을 사용하도록 리팩토링 한다.
 
 ```go
 func TestWallet(t *testing.T) {
@@ -568,29 +566,29 @@ func assertError(t testing.TB, got error, want error) {
 }
 ```
 
-And now the test is easier to follow too.
+그리고 이제 테스트는 매우 따라가기 쉬워졌다.
 
-I have moved the helpers out of the main test function just so when someone opens up a file they can start reading our assertions first, rather than some helpers.
+나는 그리고 헬퍼들(helpers)을 메인 테스트 함수에서 빼서 옮겼고, 이것으로 인해서 다른 사람이 파일을 열었을 때 헬퍼들(helpers)를 먼저 읽기보다 assertions을 먼저 읽기 시작하도록 하였다. 
 
-Another useful property of tests is that they help us understand the _real_ usage of our code so we can make sympathetic code. We can see here that a developer can simply call our code and do an equals check to `ErrInsufficientFunds` and act accordingly.
+테스트의 다른 특징으로는 테스트를 통하여 우리가 _실제_ 코드의 사용법을 이해하도록 도와주고 그래서 코드를 공감할 수 있도록 만들어준다. 여기서 보듯이 개발자는 간단히 우리의 코드를 호출하고 `ErrInsufficientFunds`와 동일한지 확인하고 적절히 행동하면 된다.
 
 ### Unchecked errors
 
-Whilst the Go compiler helps you a lot, sometimes there are things you can still miss and error handling can sometimes be tricky.
+Go 컴파일러가 많은 것을 도와주지만, 때때로 당신이 놓치고 에러 핸들링하기 쉽지 않은 것들이 있다. 
 
-There is one scenario we have not tested. To find it, run the following in a terminal to install `errcheck`, one of many linters available for Go.
+우리가 테스트하지 않은 하나의 시나리오가 있다. 그것을 찾기 위해, 터미널에서 다음과 같은 것을 쳐서 Go에서 이용가능한 linter 중 하나인 `errcheck`를 설치하자 
 
 `go get -u github.com/kisielk/errcheck`
 
-Then, inside the directory with your code run `errcheck .`
+그 뒤, 당신 코드의 디렉토리 안에서 `errcheck .`을 실행하자.
 
-You should get something like
+당신은 다음과 같은 것을 받을 것이다.
 
 `wallet_test.go:17:18: wallet.Withdraw(Bitcoin(10))`
 
-What this is telling us is that we have not checked the error being returned on that line of code. That line of code on my computer corresponds to our normal withdraw scenario because we have not checked that if the `Withdraw` is successful that an error is _not_ returned.
+이것이 우리에게 말하고자 하는 것은 우리는 코드의 그 줄에서 반환되는 에러를 확인하지 않았다는 것이다. 이것은 내 컴퓨터에서 코드의 그 라인은 우리의 일반적인 인출 시나리오이고 우리는 `Withdraw`가 성공적인지, 즉 에러가 반환되지 _않았는지_ 확인하지 않았기 때문을 나타낸다.
 
-Here is the final test code that accounts for this.
+이것이 계좌를 위한 마지막 테스트 코드다.
 
 ```go
 func TestWallet(t *testing.T) {
@@ -649,27 +647,27 @@ func assertError(t testing.TB, got error, want error) {
 
 ## Wrapping up
 
-### Pointers
+### 포인터
 
-* Go copies values when you pass them to functions/methods so if you're writing a function that needs to mutate state you'll need it to take a pointer to the thing you want to change.
-* The fact that Go takes a copy of values is useful a lot of the time but sometimes you won't want your system to make a copy of something, in which case you need to pass a reference. Examples could be very large data or perhaps things you intend only to have one instance of \(like database connection pools\).
+* Go는 함수/메서드에서 값을 넘겨줄 때 값을 복사하기 때문에 만약 함수에서 그 상태를 바꾸기를 원한다면 바꾸길 원하는 것의 포인터를 받아야 한다. 
+* Go에서 값을 복사한다는 사실은 꽤나 자주 유용하지만 때때로 당신의 시스템에서 어떤 것의 복사본을 만들기 원하지 않는다면 그 경우, 참조(reference)를 넘겨주어야 한다. 예를들면, 매우 큰 데이터나 데이터베이스의 커넥션풀 같이 아마 당신이 하나의 인스턴스만 가지려 하는 것들 일 수 있다.
 
 ### nil
 
-* Pointers can be nil
-* When a function returns a pointer to something, you need to make sure you check if it's nil or you might raise a runtime exception, the compiler won't help you here.
-* Useful for when you want to describe a value that could be missing
+* 포인터는 nil일 수 있다.
+* 만약 함수가 어떤 것의 포인터를 반환하였다면 당신은 반드시 그것이 nil인지 아닌지 확인하거나 런타임 예외를 일으켜야 한다. 컴파일러는 이것에서 당신을 도와주지 않는다.
+* 당신이 표현하려 하는 값이 없을 수도 있을 때 유용하다.
 
-### Errors
+### 에러
 
-* Errors are the way to signify failure when calling a function/method.
-* By listening to our tests we concluded that checking for a string in an error would result in a flaky test. So we refactored to use a meaningful value instead and this resulted in easier to test code and concluded this would be easier for users of our API too.
-* This is not the end of the story with error handling, you can do more sophisticated things but this is just an intro. Later sections will cover more strategies.
-* [Don’t just check errors, handle them gracefully](https://dave.cheney.net/2016/04/27/dont-just-check-errors-handle-them-gracefully)
+* 에러는 함수/메서드를 호출할 때 실패를 알려주는 방법이다.
+* 우리의 테스트 과정을 본다면, 에러에 스트링을 사용하여 체크하는 방법은 매우 유별난 테스트가 된다고 결론을 내렸다. 따라서 우리는 그 대신 의미있는 값으로 리팩토링하여 테스트를 더 쉽게 할 수 있고 이것을 사용하면 API의 사용자도 더 쉬워질 것이다. 
+* 이것은 에러 처리의 끝이 아니며, 당신은 좀 더 복잡한 것을 할 수 있고 이것은 단지 시작이다. 이후 섹션에서 더 많은 전략을 다룰 것이다.
+* [에러를 체크하지마라, 에러를 우아하게 다뤄라](https://dave.cheney.net/2016/04/27/dont-just-check-errors-handle-them-gracefully)
 
-### Create new types from existing ones
+### 기존 타입으로부터 새로운 타입 생성
 
-* Useful for adding more domain specific meaning to values
-* Can let you implement interfaces
+* 값에 특정 도메인에 의미를 추가하는데 유용하다.
+* 인터페이스를 구현할 수 있도록 한다. 
 
-Pointers and errors are a big part of writing Go that you need to get comfortable with. Thankfully the compiler will _usually_ help you out if you do something wrong, just take your time and read the error.
+포인터와 에러는 Go를 작성하는데 있어서 매우 큰 부분이며 당신은 이것들에 익숙해져야 한다. 만약 당신이 실수하더라도 고맙게도 컴파일러가 _보통_ 문제가 생긴 부분을 도와주기 때문에 시간을 들여 그 에러를 읽어보도록 하자.
