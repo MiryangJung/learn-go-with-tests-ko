@@ -60,7 +60,7 @@ Go는 go파일을 다음 세 개의 디렉토리에 배치합니다. 모든 소�
 mkdir -p $GOPATH/src $GOPATH/pkg $GOPATH/bin
 ```
 
-At this point you can `go get` and the `src/package/bin` will be installed correctly in the appropriate `$GOPATH/xxx` directory.
+이 시점에 `go get`을 실행하면 `src/package/bin`이 `$GOPATH/xxx`디렉토리에 올바르게 설치됩니다.
 
 ### Go Modules
 Go 1.11에서는 다른 워크 플로우를 가능하게 하는 [Modules](https://github.com/golang/go/wiki/Modules)(모듈)가 소개되었습니다. 이 새로운 접근 방식은 Go 1.16 이후 기본 빌드 모드이므로 `GOPATH`를 사용하는 것은 권장되지 않습니다.
