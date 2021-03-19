@@ -1,5 +1,6 @@
 .idea/
 *.iml
+.vscode/
 
 # Book build output
 _book/
