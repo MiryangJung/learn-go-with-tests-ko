@@ -43,7 +43,7 @@ Go는 독선적입니다.
 컨벤션에 따라서, 모든 Go 코드는 하나의 workspace(폴더) 안에 존재해야합니다. 이 workspace는 컴퓨터 어디에나 있을 수 있습니다. workspace를 지정하지 않으면 Go는 `$HOME/go`를 기본 작업 공간으로 간주합니다. workspace는 [GOPATH](https://golang.org/cmd/go/#hdr-GOPATH_environment_variable) 환경변수를 통해 식별되거나 변경될 수 있습니다.
 
 나중에 스크립트, 셸 등에서 사용할 수 있도록 환경 변수를 설정해야 합니다.
-당신의 `.bash_profile`에 아래의 expoort를 추가하세요.:
+당신의 `.bash_profile`에 아래의 expoort를 추가해야 합니다.:
 
 ```sh
 export GOPATH=$HOME/go
@@ -127,7 +127,7 @@ Go를 디버깅하기 위하여 Delve를 고려할 수 있습니다. (그리고 
 go get -u github.com/go-delve/delve/cmd/dlv
 ```
 
-VS Code에서 Go 디버거를 사용하기 위한 추가적인 설정을 살펴보고싶다면 [VS Code debugging documentation](https://github.com/golang/vscode-go/blob/master/docs/debugging.md)를 참고하세요.
+VS Code에서 Go 디버거를 사용하기 위한 추가적인 설정을 살펴보고싶다면 [VS Code debugging documentation](https://github.com/golang/vscode-go/blob/master/docs/debugging.md)를 참고하시길 바랍니다.
 
 ## Go Linting
 
@@ -163,4 +163,4 @@ brew install golangci/tap/golangci-lint
 
 ## Wrapping up
 
-지금 우리는 Go가 설치되어있어야 하며, 편집기와 몇가지 기본적인 도구가 준비되어 있습니다. Go는 third party 제품에 매우 커다란 에코시스템을 갖고있습니다. 우리는 몇가지 유용한 컴포넌트를 확인했으며, 보다 완벽한 리스트를 원한다면 [awesome-go](https://awesome-go.com)를 확인하세요.
+지금 우리는 Go가 설치되어있어야 하며, 편집기와 몇가지 기본적인 도구가 준비되어 있습니다. Go는 third party 제품에 매우 커다란 에코시스템을 갖고있습니다. 우리는 몇가지 유용한 컴포넌트를 확인했으며, 보다 완벽한 리스트를 원한다면 [awesome-go](https://awesome-go.com)를 확인하시길 바랍니다.
