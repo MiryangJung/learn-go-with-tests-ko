@@ -13,10 +13,10 @@
 
 - 원본 : [english](https://quii.gitbook.io/learn-go-with-tests/)
 
+- [한국어](https://miryang.gitbook.io/learn-go-with-tests)
 - [中文](https://studygolang.gitbook.io/learn-go-with-tests)
 - [Português](https://larien.gitbook.io/aprenda-go-com-testes/)
 - [日本語](https://andmorefine.gitbook.io/learn-go-with-tests/)
-- [한국어](https://miryang.gitbook.io/learn-go-with-tests)
 
 ## 왜
 
@@ -68,68 +68,22 @@
 
 ### 질문과 답
 
-가끔 인터넷에서 이런 질문들을 볼 수 있다.
-
-> x,y 및 z를 수행하는 놀라운 함수를 어떻게 테스트합니까?
-
-If you have such a question raise it as an issue on github and I'll try and find time to write a short chapter to tackle the issue. I feel like content like this is valuable as it is tackling people's _real_ questions around testing.
-
-* [OS exec](os-exec.md) - An example of how we can reach out to the OS to execute commands to fetch data and keep our business logic testable/
-* [Error types](error-types.md) - Example of creating your own error types to improve your tests and make your code easier to work with.
+* [OS exec](os-exec.md) - OS 커맨트 명령을 실행하여 데이터를 가져오고, 로직 테스트가 가능한 비즈니스를 유지하는 방법 예제
+* [Error types](error-types.md) - 테스트를 개선하고 코드를 사용하기 쉽게 할 수 있도록 자신만의 에러 타입을 만드는 방법 예제
 * [Context-aware Reader](context-aware-reader.md) - Learn how to TDD augmenting `io.Reader` with cancellation. Based on [Context-aware io.Reader for Go](https://pace.dev/blog/2020/02/03/context-aware-ioreader-for-golang-by-mat-ryer)
-* [Revisiting HTTP Handlers](http-handlers-revisited.md) - Testing HTTP handlers seems to be the bane of many a developer's existence. This chapter explores the issues around designing handlers correctly.
+* [Revisiting HTTP Handlers](http-handlers-revisited.md) - HTTP 핸들러를 테스트하는 것은 많은 개발자의 골칫거리로 보인다. 이 챕터에서는 핸들러를 올바르게 설계하는 사안에 대해서 살펴본다.
 
 ### Meta / Discussion
 
-* [Why](why.md) - Watch a video, or read about why unit testing and TDD is important
-* [Intro to generics](intro-to-generics.md) - Learn how to write functions that take generic arguments and make your own generic data-structure
-* [Anti-patterns](anti-patterns.md) - A short chapter on TDD and unit testing anti-patterns
+* [Why](why.md) - 비디오를 보거나 유닛 테스트와 TDD가 중요한 이유에 대해 읽어보십시오.
+* [Intro to generics](intro-to-generics.md) - 제네릭 인수를 사용해 함수를 작성하고, 자신만의 제네릭 구조체(structure)를 만드는 방법 학습
+* [Anti-patterns](anti-patterns.md) - TDD와 유닛 테스트 anti-patterns에 관한 짧은 챕터
 
 ## 기여
 
 * _이 프로젝트는 진행 중이다._ 만약 기여하고 싶다면, 연락하십시오.
 * [contributing.md](https://github.com/quii/learn-go-with-tests/tree/842f4f24d1f1c20ba3bb23cbc376c7ca6f7ca79a/contributing.md) 를 읽으십시오.
 * 아이디어가 있다면 이슈를 등록하십시오.
-
-## Background
-
-I have some experience introducing Go to development teams and have tried different approaches as to how to grow a team from some people curious about Go into highly effective writers of Go systems.
-
-### What didn't work
-
-#### Read _the_ book
-
-An approach we tried was to take [the blue book](https://www.amazon.co.uk/Programming-Language-Addison-Wesley-Professional-Computing/dp/0134190440) and every week discuss the next chapter along with the exercises.
-
-I love this book but it requires a high level of commitment. The book is very detailed in explaining concepts, which is obviously great but it means that the progress is slow and steady - this is not for everyone.
-
-I found that whilst a small number of people would read chapter X and do the exercises, many people didn't.
-
-#### Solve some problems
-
-Katas are fun but they are usually limited in their scope for learning a language; you're unlikely to use goroutines to solve a kata.
-
-Another problem is when you have varying levels of enthusiasm. Some people just learn way more of the language than others and when demonstrating what they have done end up confusing people with features the others are not familiar with.
-
-This ends up making the learning feel quite _unstructured_ and _ad hoc_.
-
-### What did work
-
-By far the most effective way was by slowly introducing the fundamentals of the language by reading through [go by example](https://gobyexample.com/), exploring them with examples and discussing them as a group. This was a more interactive approach than "read chapter x for homework".
-
-Over time the team gained a solid foundation of the _grammar_ of the language so we could then start to build systems.
-
-This to me seems analogous to practicing scales when trying to learn guitar.
-
-It doesn't matter how artistic you think you are, you are unlikely to write good music without understanding the fundamentals and practicing the mechanics.
-
-### What works for me
-
-When _I_ learn a new programming language I usually start by messing around in a REPL but eventually, I need more structure.
-
-What I like to do is explore concepts and then solidify the ideas with tests. Tests verify the code I write is correct and documents the feature I have learned.
-
-Taking my experience of learning with a group and my own personal way I am going to try and create something that hopefully proves useful to other teams. Learning the fundamentals by writing small tests so that you can then take your existing software design skills and ship some great systems.
 
 ## 누구를 위해
 
@@ -144,6 +98,12 @@ Taking my experience of learning with a group and my own personal way I am going
 * 프로그래밍 경험. `if`, 변수, 함수 등을 이해할 수 있는지
 * 터미널에 익숙한지
 
+## 번역
+
+번역 작업은 [여기](https://github.com/MiryangJung/learn-go-with-tests-ko) 에서 이루어지고 있습니다.
+
+* 수정이 필요하거나 번역에 참여하고 싶다면 [여기](https://github.com/MiryangJung/learn-go-with-tests-ko) 에 PR을 보내주세요.
+
 ## 피드백
 
 * 이슈를 등록하거나 PR를 보내세요. [여기](https://github.com/quii/learn-go-with-tests) 또는 [tweet me @quii](https://twitter.com/quii)
@@ -152,7 +112,3 @@ Taking my experience of learning with a group and my own personal way I am going
 
 [Logo is by egonelbre](https://github.com/egonelbre) What a star!
 
-
-## 번역
-
-* 수정이 필요하거나 번역에 참여하고 싶다면 [여기]((https://github.com/MiryangJung/learn-go-with-tests-ko)) 에 PR을 보내주세요.
