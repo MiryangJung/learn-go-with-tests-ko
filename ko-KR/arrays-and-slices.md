@@ -476,9 +476,9 @@ $ go test
 
 테스트를 작성하는 것보다 Go 언어를 쉽게 테스트하는 방법은 Go playground를 이용하는 것이다. 당신은 많은 것들을 시도해 볼 수 있으며, 당신이 질문을 해야 할 경우 당신의 코드를 쉽게 공유할 수 있다. [당신이 슬라이스를 실험해 볼 수 있도록 go playground를 만들어 두었다.](https://play.golang.org/p/ICCWcRGIO68)
 
-[여기 예시가 있습니다,](https://play.golang.org/p/bTrRmYfNYCp) 배열을 자르고이 슬라이스를 변경하는 것이 본래의 배열에 어떠한 영향을 주는지 알 수 있다.(하지만 `복제`된 슬라이스는 본래의 배열에 영향을 주지 못한다.)
+[여기 예시가 있다,](https://play.golang.org/p/bTrRmYfNYCp) 배열을 자르고이 슬라이스를 변경하는 것이 본래의 배열에 어떠한 영향을 주는지 알 수 있다.(하지만 `복제`된 슬라이스는 본래의 배열에 영향을 주지 못한다.)
 
-[또 다른 예시가 있습니다,](https://play.golang.org/p/Poth8JS28sc) 매우 큰 슬라이스를 자르고 난 후 그들을 복제해두면 좋은 이유에 대해서 알 수 있다.
+[또 다른 예시가 있다,](https://play.golang.org/p/Poth8JS28sc) 매우 큰 슬라이스를 자르고 난 후 그들을 복제해두면 좋은 이유에 대해서 알 수 있다.
 
 [for]: ../iteration.md#
 [blog-slice]: https://blog.golang.org/go-slices-usage-and-internals
