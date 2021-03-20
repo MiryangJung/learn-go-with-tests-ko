@@ -234,11 +234,11 @@ func ping(url string) chan struct{} {
 
 ##### 항상 `make` 함수로 채널 만들기
 
-Notice how we have to use `make` when creating a channel; rather than say `var ch chan struct{}`. When you use `var` the variable will be initialised with the "zero" value of the type. So for `string` it is `""`, `int` it is 0, etc.
+`var ch chan struct {}`를 선언하는 것보다 채널을 만들 때 `make`를 어떻게 사용해야 하는지 주의해야 한다. `var`를 사용할 때 변수는 타입의 "비어있는" 값으로 초기화된다. 따라서 `string`의 경우 `""`, `int`는 0 등으로 초기화된다.
 
-For channels the zero value is `nil` and if you try and send to it with `<-` it will block forever because you cannot send to `nil` channels
+채널의 경우 비어있는 값은 `nil`이고 `<-`을 사용해 보내려고 하면 `nil` 채널로 보낼 수 없기 때문에 영원히 차단된다.
 
-[You can see this in action in The Go Playground](https://play.golang.org/p/IIbeAox5jKA)
+[Go Playground에서 이 동작을 확인할 수 있다.](https://play.golang.org/p/IIbeAox5jKA)
 
 #### `select`
 
