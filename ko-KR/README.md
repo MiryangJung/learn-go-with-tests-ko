@@ -104,6 +104,18 @@
 
 * 수정이 필요하거나 번역에 참여하고 싶다면 [여기](https://github.com/MiryangJung/learn-go-with-tests-ko) 에 PR을 보내주세요.
 
+### 번역자
+
+- [MiryangJung](https://github.com/miryangjung)
+- [hjjg200](https://github.com/hjjg200)
+- [MinsuKim](https://github.com/alstn2468)
+- [HyunseokJeong](https://github.com/nicewook)
+- [JunpyoChang](https://github.com/changjunpyo)
+- [JaehoonKim](https://github.com/jaehoonn)
+- [YoungjunChoi](https://github.com/WHYjun)
+- [Seongbin Cho](https://github.com/chobobdev)
+
+
 ## 피드백
 
 * 이슈를 등록하거나 PR를 보내세요. [여기](https://github.com/quii/learn-go-with-tests) 또는 [tweet me @quii](https://twitter.com/quii)
