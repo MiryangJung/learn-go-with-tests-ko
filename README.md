@@ -30,6 +30,7 @@ Go 기초부터 TDD 까지 배울 수 있는 아주 좋은 프로젝트라고 �
 
 ### 번역자
 - [MiryangJung](https://github.com/miryangjung)
+- [hjjg200](https://github.com/hjjg200)
 - [MinsuKim](https://github.com/alstn2468)
 - [HyunseokJeong](https://github.com/nicewook)
 - [JaehoonKim](https://github.com/jaehoonn)
