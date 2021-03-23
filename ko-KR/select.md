@@ -242,17 +242,17 @@ func ping(url string) chan struct{} {
 
 #### `select`
 
-If you recall from the concurrency chapter, you can wait for values to be sent to a channel with `myVar := <-ch`. This is a _blocking_ call, as you're waiting for a value.
+동시성 챕터에서 생각해 보면, `myVar := <- ch`를 사용해 값이 채널로 전송 될 때까지 기다릴 수 있다. 값을 기다리고 있으므로 _차단_ 호출이다.
 
-What `select` lets you do is wait on _multiple_ channels. The first one to send a value "wins" and the code underneath the `case` is executed.
+`select`을 사용하면 _여러_ 채널에서 대기 할 수 있습니다. 처음으로 값을 보내는 항목이 "승리"하고 `case` 아래의 코드가 실행된다.
 
-We use `ping` in our `select` to set up two channels for each of our `URL`s. Whichever one writes to its channel first will have its code executed in the `select`, which results in its `URL` being returned (and being the winner).
+`select`에서 `ping`을 사용하여 각 `URL`에 대해 두 개의 채널을 설정한다. 어느 쪽이 먼저 채널에 작성하든 `select`에서 코드가 실행되어 `URL`이 반환되고 승자가 된다.
 
-After these changes, the intent behind our code is very clear and the implementation is actually simpler.
+이러한 변경을 한 후 코드의 의도는 매우 명확하고 구현이 실제로 더 간단하다.
 
 ### 시간초과
 
-Our final requirement was to return an error if `Racer` takes longer than 10 seconds.
+마지막 요구 사항은 `Racer`가 10 초 이상 걸리면 오류를 반환하는 것이다.
 
 ## 테스트부터 작성하기
 
@@ -272,7 +272,7 @@ t.Run("returns an error if a server doesn't respond within 10s", func(t *testing
 })
 ```
 
-We've made our test servers take longer than 10s to return to exercise this scenario and we are expecting `Racer` to return two values now, the winning URL (which we ignore in this test with `_`) and an `error`.
+우리는 테스트 서버가 이 시나리오를 실행하는 데 10 초 이상 걸리도록 만들었으며 이제 `Racer`가 두 개의 값, 즉 승리 URL (이 테스트에서는 `_`로 무시함)과 `error`를 반환할 것으로 예상한다.
 
 ## 테스트를 실행해보기
 
@@ -291,11 +291,11 @@ func Racer(a, b string) (winner string, error error) {
 }
 ```
 
-Change the signature of `Racer` to return the winner and an `error`. Return `nil` for our happy cases.
+`Racer`의 시그니처를 변경하여 승자와 `error`를 반환한다. 행복한 케이스에 대해서는 `nil`을 반환한다.
 
-The compiler will complain about your _first test_ only looking for one value so change that line to `got, _ := Racer(slowURL, fastURL)`, knowing that we should check we _don't_ get an error in our happy scenario.
+컴파일러는 하나의 값만 찾는 *첫 번째 테스트*에 대해 불평할 것이므로 해당 줄을 `got, _ := Racer(slowURL, fastURL)`로 변경하여 행복한 시나리오에서 오류가 발생하지 _않는지_ 확인해야 한다.
 
-If you run it now after 11 seconds it will fail.
+테스트를 실행하면 11초 뒤에 실패할 것이다.
 
 ```
 --- FAIL: TestRacer (12.00s)
