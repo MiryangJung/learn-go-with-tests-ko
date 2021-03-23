@@ -31,11 +31,11 @@ func TestRacer(t *testing.T) {
 
 우리는 이것이 완벽하지 않고 문제가 있다는 것을 알고 있지만 그것은 우리를 움직일 것이다. 처음부터 완벽하게 만드는 것에 너무 얽매이지 않는 것이 중요하다.
 
-## 테스트를 실행해보기
+## 테스트 실행해보기
 
 `./racer_test.go:14:9: undefined: Racer`
 
-## 테스트를 실행할 최소한의 코드를 작성하고 실패한 테스트 출력을 확인하기
+## 테스트를 실행할 최소한의 코드를 작성하고 테스트 실패 결과를 확인하기
 
 ```go
 func Racer(a, b string) (winner string) {
@@ -45,7 +45,7 @@ func Racer(a, b string) (winner string) {
 
 `racer_test.go:25: got '', want 'http://www.quii.co.uk'`
 
-## 통과할 만큼 충분한 코드를 작성하기
+## 테스트를 통과하는 최소한의 코드 작성하기
 
 ```go
 func Racer(a, b string) (winner string) {
@@ -130,7 +130,7 @@ func TestRacer(t *testing.T) {
 
 테스트를 다시 실행하면 확실히 통과 할 것이며 더 빨라질 것이다. 의도적으로 테스트를 실패시키기 위해 sleep을 사용해라.
 
-## 리팩토링
+## 리팩터링 하기
 
 프로덕션 코드와 테스트 코드 모두에 약간의 중복이 있다.
 
@@ -183,7 +183,7 @@ func makeDelayedServer(delay time.Duration) *httptest.Server {
 }
 ```
 
-우리는 가짜 서버를 `makeDelayedServer`라는 함수로 리팩토링 하여 테스트에서 흥미롭지 않은 코드를 옮기고 반복을 줄였다.
+우리는 가짜 서버를 `makeDelayedServer`라는 함수로 리팩터링 하여 테스트에서 흥미롭지 않은 코드를 옮기고 반복을 줄였다.
 
 ### `defer`
 
@@ -193,7 +193,7 @@ func makeDelayedServer(delay time.Duration) *httptest.Server {
 
 함수가 끝날 때 실행되기를 원하지만, 나중에 코드를 읽는 사람을 위해 서버를 생성한 위치 근처에 명령어를 보관한다.
 
-리팩토링은 개선된 것이며 지금까지 다루었던 Go 기능을 고려할 때 합리적인 해결책이지만 해결책을 더 간단하게 만들 수 있다.
+리팩터링은 개선된 것이며 지금까지 다루었던 Go 기능을 고려할 때 합리적인 해결책이지만 해결책을 더 간단하게 만들 수 있다.
 
 ### 동기화 프로세스
 
@@ -274,11 +274,11 @@ t.Run("returns an error if a server doesn't respond within 10s", func(t *testing
 
 우리는 테스트 서버가 이 시나리오를 실행하는 데 10 초 이상 걸리도록 만들었으며 이제 `Racer`가 두 개의 값, 즉 승리 URL (이 테스트에서는 `_`로 무시함)과 `error`를 반환할 것으로 예상한다.
 
-## 테스트를 실행해보기
+## 테스트 실행해보기
 
 `./racer_test.go:37:10: assignment mismatch: 2 variables but 1 values`
 
-## 테스트를 실행할 최소한의 코드를 작성하고 실패한 테스트 출력을 확인하기
+## 테스트를 실행할 최소한의 코드를 작성하고 테스트 실패 결과를 확인하기
 
 ```go
 func Racer(a, b string) (winner string, error error) {
@@ -303,7 +303,7 @@ func Racer(a, b string) (winner string, error error) {
         racer_test.go:40: expected an error but didn't get one
 ```
 
-## 통과할 만큼 충분한 코드를 작성하기
+## 테스트를 통과하는 최소한의 코드 작성하기
 
 ```go
 func Racer(a, b string) (winner string, error error) {
@@ -318,15 +318,15 @@ func Racer(a, b string) (winner string, error error) {
 }
 ```
 
-`time.After` is a very handy function when using `select`. Although it didn't happen in our case you can potentially write code that blocks forever if the channels you're listening on never return a value. `time.After` returns a `chan` (like `ping`) and will send a signal down it after the amount of time you define.
+`time.After`는 `select`를 사용할 때 매우 편리한 기능이다. 우리의 경우에는 발생하지 않았지만 수신중인 채널이 값을 반환하지 않으면 영원히 차단되는 코드를 잠재적으로 작성할 수 있다. `time.After`는 `chan` (`ping`과 같은)을 반환하고 정의한 시간 후에 신호를 보낸다.
 
-For us this is perfect; if `a` or `b` manage to return they win, but if we get to 10 seconds then our `time.After` will send a signal and we'll return an `error`.
+우리에게 이것은 완벽하다. `a` 또는 `b`가 반환하면 승리하지만 10 초가 되면 `time.After`가 신호를 보내고 오류를 반환하게 된다.
 
 ### 느린 테스트
 
-The problem we have is that this test takes 10 seconds to run. For such a simple bit of logic, this doesn't feel great.
+문제는 이 테스트를 실행하는 데 10 초가 걸린다는 것이다. 그런 간단한 논리로는 기분이 좋지 않다.
 
-What we can do is make the timeout configurable. So in our test, we can have a very short timeout and then when the code is used in the real world it can be set to 10 seconds.
+우리가 할 수 있는 일은 시간제한을 구성 가능하게 만드는 것이다. 따라서 테스트에서 매우 짧은 시간제한을 가질 수 있으며 코드가 실제 세계에서 사용될 때 10 초로 설정할 수 있다.
 
 ```go
 func Racer(a, b string, timeout time.Duration) (winner string, error error) {
@@ -341,14 +341,14 @@ func Racer(a, b string, timeout time.Duration) (winner string, error error) {
 }
 ```
 
-Our tests now won't compile because we're not supplying a timeout.
+타임 아웃을 제공하지 않기 때문에 이제 테스트가 컴파일되지 않는다.
 
-Before rushing in to add this default value to both our tests let's _listen to them_.
+이 기본값을 두 테스트에 모두 추가하기 전에 _기다려_ 보겠습니다.
 
-- Do we care about the timeout in the "happy" test?
-- The requirements were explicit about the timeout.
+- "행복한"테스트의 시간 초과에 대해 신경 쓸지?
+- 제한 시간에 대한 요구 사항이 명시되어 있다.
 
-Given this knowledge, let's do a little refactoring to be sympathetic to both our tests and the users of our code.
+이 지식을 감안할 때 테스트와 코드 사용자 모두에게 공감할 수 있도록 약간의 리팩터링을 해보겠다.
 
 ```go
 var tenSecondTimeout = 10 * time.Second
@@ -369,7 +369,7 @@ func ConfigurableRacer(a, b string, timeout time.Duration) (winner string, error
 }
 ```
 
-Our users and our first test can use `Racer` (which uses `ConfigurableRacer` under the hood) and our sad path test can use `ConfigurableRacer`.
+사용자와 첫 번째 테스트에서는 `Racer` (내부에서 `ConfigurableRacer` 사용)를 사용할 수 있고 슬픈 경로 테스트에서는 `ConfigurableRacer`를 사용할 수 있다.
 
 ```go
 func TestRacer(t *testing.T) {
@@ -410,16 +410,16 @@ func TestRacer(t *testing.T) {
 }
 ```
 
-I added one final check on the first test to verify we don't get an `error`.
+`error`가 없는지 확인하기 위해 첫 번째 테스트에서 최종 확인을 추가했다.
 
-## 마무리
+## 정리
 
 ### `select`
 
-- Helps you wait on multiple channels.
-- Sometimes you'll want to include `time.After` in one of your `cases` to prevent your system blocking forever.
+- 여러 채널에서 대기할 수 있다.
+- 때로는 시스템이 영원히 차단되는 것을 방지하기 위해 `cases` 중 하나에 `time.After`를 포함하고 싶을 것이다.
 
 ### `httptest`
 
-- A convenient way of creating test servers so you can have reliable and controllable tests.
-- Using the same interfaces as the "real" `net/http` servers which is consistent and less for you to learn.
+- 신뢰할 수 있고 제어 가능한 테스트를 수행할 수 있도록 테스트 서버를 만드는 편리한 방법이다.
+- 일관되고 배우기 어려운 "실제" `net/http` 서버와 동일한 인터페이스를 사용한다.
