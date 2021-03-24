@@ -23,3 +23,8 @@ indent_size = 2
 [*.go]
 # `gofmt` uses tabs for indentation
 indent_style = tab
+
+# For Go code snippets inserted to markdown
+[*.md]
+indent_style = tab
+indent_size = 2
