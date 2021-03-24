@@ -2,7 +2,7 @@
 
 **[이 챕터에서 사용되는 모든 코드는 여기서 찾을 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/concurrency)**
 
-생각해 보자: 동료가 URL들의 목록 상태를 확인하는 기능인 `CheckWebsites` 함수를 작성했다.
+생각해 보자: 동료가 URL 목록의 상태를 확인하는 기능인 `CheckWebsites` 함수를 작성했다.
 
 ```go
 package concurrency
@@ -64,7 +64,7 @@ func TestCheckWebsites(t *testing.T) {
 }
 ```
 
-해당 함수는 생산 중이고 수백 개의 웹사이트들을 확인하는 데 사용되고 있다. 하지만 이 작업이 느리다고 당신의 동료의 불만이 쌓이기 시작한다. 그래서 그들은 이 기능의 속도를 높여달라고 요청한다.
+해당 함수는 생산 중이고 수백 개의 웹사이트들을 확인하는 데 사용되고 있다. 하지만 이 작업이 느리다고 당신의 동료의 불만이 쌓이기 시작한다. 그래서 그들은 이 기능의 속도를 높여달라고 요청했다.
 
 ## 테스트를 작성해 보자
 
@@ -241,7 +241,7 @@ PASS
 ok      github.com/gypsydave5/learn-go-with-tests/concurrency/v1        2.012s
 ```
 
-하지만 만약 운이 좋지 않다면 (몇 번 더 실행해 보더라도 벤치마크와 같이 실행한다면 더 가능성이 높다)
+하지만 만약 운이 좋지 않다면 (벤치 마크에서 실행하면 더 많은 시도가 이뤄질 가능성이 높다)
 
 ```sh
 fatal error: concurrent map writes
