@@ -42,3 +42,4 @@ Go 기초부터 TDD 까지 배울 수 있는 아주 좋은 프로젝트라고 �
 - [SangjunCha](https://github.com/SangjunCha-dev)
 - [hywn](https://github.com/14hhan)
 - [YeseulHong](https://github.com/HongYeseul)
+- [Daehyun Paik](https://github.com/gurrpi/)
