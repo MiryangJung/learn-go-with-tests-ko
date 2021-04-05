@@ -2,46 +2,46 @@
 
 **[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/main/websockets)**
 
-In this chapter we'll learn how to use WebSockets to improve our application.
+이 챕터에서 우리는 우리의 어플리케이션을 개선하기 위해 어떻게 웹소켓을 사용할 지 배울 것입니다.
 
 ## Project recap
 
-We have two applications in our poker codebase
+우리는 우리의 poker codebase에 두개의 어플리케이션을 가집니다.
 
-- *Command line app*. Prompts the user to enter the number of players in a game. From then on informs the players of what the "blind bet" value is, which increases over time. At any point a user can enter `"{Playername} wins"` to finish the game and record the victor in a store.
-- *Web app*. Allows users to record winners of games and displays a league table. Shares the same store as the command line app.
+-*Command line app*. 사용자에게 게임의 플레이어 수를 입력하라는 메시지를 표시합니다. 그때부터 플레이어에게 시간이 지남에 따라 증가하는 "블라인드 베팅"값이 무엇인지 알려줍니다. 사용자는 언제든지` "{Playername} wins"`를 입력하여 게임을 완료하고 저장에 승자를 기록 할 수 있습니다.
+-*Web app*. 사용자가 게임의 승자를 기록하고 리그 테이블을 표시 할 수 있습니다. 명령 줄 앱과 동일한 저장소를 공유합니다.
 
 ## Next steps
 
-The product owner is thrilled with the command line application but would prefer it if we could bring that functionality to the browser. She imagines a web page with a text box that allows the user to enter the number of players and when they submit the form the page displays the blind value and automatically updates it when appropriate. Like the command line application the user can declare the winner and it'll get saved in the database.
+제품 소유자는 command line app에 만족하지만 해당 기능을 브라우저에 가져오는 것을 더 선호합니다. 그녀는 사용자가 플레이어의 수를 적을 수 있는 텍스트 상자가 있는 웹페이지를 상상합니다. 텍스트 상자 양식을 제출할 때, 페이지는 블라인드 값을 보여주고 적절한 때에 자동으로 블라인드 값을 업데이트 합니다. Command line app과 마찬가지로 사용자는 승자를 선언 할 수 있으며 데이터베이스에 저장됩니다.
 
-On the face of it, it sounds quite simple but as always we must emphasise taking an _iterative_ approach to writing software.
+겉으로는 아주 간단하게 들리지만 항상 그렇듯이 소프트웨어 작성에 대해 _반복적_ 접근 방식을 강조해야합니다.
 
-First of all we will need to serve HTML. So far all of our HTTP endpoints have returned either plaintext or JSON. We _could_ use the same techniques we know (as they're all ultimately strings) but we can also use the [html/template](https://golang.org/pkg/html/template/) package for a cleaner solution.
+우선 우리는 HTML을 제공해야합니다. 지금까지 모든 HTTP 엔드 포인트는 일반 텍스트 또는 JSON을 반환했습니다. 우리는 우리가 알고있는 것과 동일한 기술을 사용할 수 있지만 (궁극적으로는 strings이기 때문에) 더 깨끗한 솔루션을 위해 [html/template] (https://golang.org/pkg/html/template/) 패키지를 사용할 수도 있습니다.
 
-We also need to be able to asynchronously send messages to the user saying `The blind is now *y*` without having to refresh the browser. We can use [WebSockets](https://en.wikipedia.org/wiki/WebSocket) to facilitate this.
+또한 브라우저를 새로 고치지 않고도 'The blind is now *y*'라는 메시지를 사용자에게 비동기식으로 보낼 수 있어야합니다. 이를 위해 [WebSockets] (https://en.wikipedia.org/wiki/WebSocket)를 사용할 수 있습니다.
 
-> WebSocket is a computer communications protocol, providing full-duplex communication channels over a single TCP connection
+> WebSocket은 단일 TCP 연결을 통해 전이중 통신 채널을 제공하는 컴퓨터 통신 프로토콜입니다.
 
-Given we are taking on a number of techniques it's even more important we do the smallest amount of useful work possible first and then iterate.
+우리가 여러 기술을 취하고 있다는 점을 감안할 때 가능한 한 적은 양의 유용한 작업을 먼저 수행 한 다음 반복하는 것이 훨씬 더 중요합니다.
 
-For that reason the first thing we'll do is create a web page with a form for the user to record a winner. Rather than using a plain form, we will use WebSockets to send that data to our server for it to record.
+따라서 사용자가 우승자를 기록 할 수있는 양식이있는 웹 페이지를 가장 먼저 만들것입니다. Plain form을 사용하는 대신 WebSocket을 사용하여 해당 데이터를 서버로 전송하여 기록합니다.
 
-After that we'll work on the blind alerts by which point we will have a bit of infrastructure code set up.
+그 후에 우리는 약간의 인프라 코드가 셋업될 시점까지 블라인드 경고로 처리 할 것입니다.
 
-### What about tests for the JavaScript ?
+### 자바스크립트에 대한 테스트는 어떡합니까?
 
-There will be some JavaScript written to do this but I won't go in to writing tests.
+이를 수행하기 위해 작성된 JavaScript가 있지만 테스트 작성은 하지 않을 것입니다.
 
-It is of course possible but for the sake of brevity I won't be including any explanations for it.
+물론 가능하지만 간결함을 위해 이에 대한 설명은 포함하지 않겠습니다.
 
-Sorry folks. Lobby O'Reilly to pay me to make a "Learn JavaScript with tests".
+죄송합니다. O'Reilly를 로비하여 나에게 돈을 주어 "테스트로 JavaScript 배우기"를 만들게 하십시오.
 
-## Write the test first
+## 테스트를 가장 먼저 만들어라.
 
-First thing we need to do is serve up some HTML to users when they hit `/game`.
+가장 먼저해야 할 일은 사용자가 '/game'을 눌렀을 때 일부 HTML을 제공하는 것입니다
 
-Here's a reminder of the pertinent code in our web server
+다음으로 웹 서버 관련 코드를 알려드립니다.
 
 ```go
 type PlayerServer struct {
@@ -66,7 +66,7 @@ func NewPlayerServer(store PlayerStore) *PlayerServer {
 }
 ```
 
-The _easiest_ thing we can do for now is check when we `GET /game` that we get a `200`.
+지금 우리가 할 수 있는 가장 쉬운 일은 우리가 `GET /game` 할 때 `200`을 얻었는지 확인하는 것입니다.
 
 ```go
 func TestGame(t *testing.T) {
@@ -83,7 +83,7 @@ func TestGame(t *testing.T) {
 }
 ```
 
-## Try to run the test
+## 테스트를 실행해보세요.
 ```
 --- FAIL: TestGame (0.00s)
 === RUN   TestGame/GET_/game_returns_200
@@ -91,17 +91,17 @@ func TestGame(t *testing.T) {
     	server_test.go:109: did not get correct status, got 404, want 200
 ```
 
-## Write enough code to make it pass
+## 테스트가 통과하도록 충분한 코드를 작성하세요.
 
-Our server has a router setup so it's relatively easy to fix.
+우리 서버에는 router setup이 있으므로 비교적 쉽게 고칠 수 있습니다.
 
-To our router add
+Router에 추가하기 위해,
 
 ```go
 router.Handle("/game", http.HandlerFunc(p.game))
 ```
 
-And then write the `game` method
+그런 다음 `game` 메서드를 작성합니다.
 
 ```go
 func (p *PlayerServer) game(w http.ResponseWriter, r *http.Request) {
@@ -130,9 +130,9 @@ func TestGame(t *testing.T) {
 }
 ```
 
-You'll also notice I changed `assertStatus` to accept `response` rather than `response.Code` as I feel it reads better.
+그리고 당신은 내가 `assertStatus`의 `response.Code`를 `response`로 바꿨다는 것을 인지할 것입니다. 나는 그것이 더 읽기 쉬운 것 같기에 바꿨습니다.
 
-Now we need to make the endpoint return some HTML, here it is
+이제 엔드 포인트가 HTML을 반환하도록 해야합니다. 아래와 같습니다.
 
 ```html
 
@@ -167,122 +167,119 @@ Now we need to make the endpoint return some HTML, here it is
 </html>
 ```
 
-We have a very simple web page
+우리는 매우 간단한 웹페이지를 가지고 있습니다.
 
-- A text input for the user to enter the winner into
-- A button they can click to declare the winner.
-- Some JavaScript to open a WebSocket connection to our server and handle the submit button being pressed
+사용자가 우승자를 입력하기위한 텍스트 입력
+-우승자를 선언하기 위해 클릭 할 수있는 버튼.
+-버튼이 눌러졌을 때, 서버와의 WebSocket 연결 수립을 위한 JavaScript 코드
 
-`WebSocket` is built into most modern browsers so we don't need to worry about bringing in any libraries. The web page won't work for older browsers, but we're ok with that for this scenario.
+`WebSocket`은 대부분의 최신 브라우저에 내장되어 있으므로 라이브러리를 가져 오는 것에 대해 걱정할 필요가 없습니다. 웹 페이지는 이전 브라우저에서는 작동하지 않지만 이 시나리오에서는 괜찮습니다.
 
-### How do we test we return the correct markup?
+### 올바른 마크 업을 반환하는지 어떻게 테스트합니까?
 
-There are a few ways. As has been emphasised throughout the book, it is important that the tests you write have sufficient value to justify the cost.
+몇 가지 방법이 있습니다. 책 전체에서 강조해왔듯이 당신이 작성하는 테스트가 비용을 정당화할 만큼의 충분한 가치를 갖는 것이 중요합니다.
 
-1. Write a browser based test, using something like Selenium. These tests are the most "realistic" of all approaches because they start an actual web browser of some kind and simulates a user interacting with it. These tests can give you a lot of confidence your system works but are more difficult to write than unit tests and much slower to run. For the purposes of our product this is overkill.
-2. Do an exact string match. This _can_ be ok but these kind of tests end up being very brittle. The moment someone changes the markup you will have a test failing when in practice nothing has _actually broken_.
-3. Check we call the correct template. We will be using a templating library from the standard lib to serve the HTML (discussed shortly) and we could inject in the _thing_ to generate the HTML and spy on its call to check we're doing it right. This would have an impact on our code's design but doesn't actually test a great deal; other than we're calling it with the correct template file. Given we will only have the one template in our project the chance of failure here seems low.
-
+1. Selenium과 같은 것을 사용하여 브라우저 기반 테스트를 작성하십시오. 이러한 테스트는 어떤 종류의 실제 웹 브라우저를 시작하고 그와 상호 작용하는 사용자를 시뮬레이션하기 때문에 모든 접근 방식 중 가장 "현실적"입니다. 이러한 이 테스트는 시스템 작동에 대한 확신을 줄 수 있지만 단위 테스트보다 작성하기가 더 어렵고 실행 속도가 훨씬 느립니다. 우리 제품의 목적 상 이것은 과합니다.
+2. 정확한 문자열 일치를 수행합니다. 이것은 괜찮을 _수_ 있지만 이러한 종류의 테스트는 결국 매우 취약합니다. 누군가가 마크 업을 변경하는 순간 _실제로 고장난_ 것이 없는데도 테스트가 실패하게됩니다.
+3. 올바른 템플릿을 호출하는지 확인합니다. 우리는 HTML을 제공하기 위해 표준 lib의 템플릿 라이브러리를 사용할 것이며 (곧 논의 될 것입니다) _thing_에 삽입하여 HTML을 생성하고 우리가 제대로하고 있는지 확인하기 위해 호출을 감시 할 수 있습니다. 이것은 우리 코드의 디자인에 영향을 미칠 것이지만 실제로 많은 것을 테스트하지는 않습니다. 올바른 템플릿 파일로 부르는 것 이외에는 그렇지 않습니다. 프로젝트에 템플릿이 하나만 있으면 여기서 실패 할 가능성은 낮아 보입니다.
 So in the book "Learn Go with Tests" for the first time, we're not going to write a test.
 
-Put the markup in a file called `game.html`
+파일에 `game.html`이라는 마크 업을 넣습니다.
 
-Next change the endpoint we just wrote to the following
+다음으로 방금 작성한 endpoint 다음과 같이 변경하십시오.
 
 ```go
 func (p *PlayerServer) game(w http.ResponseWriter, r *http.Request) {
-tmpl, err := template.ParseFiles("game.html")
+	tmpl, err := template.ParseFiles("game.html")
 
-if err != nil {
-http.Error(w, fmt.Sprintf("problem loading template %s", err.Error()), http.StatusInternalServerError)
-return
-}
+	if err != nil {
+		http.Error(w, fmt.Sprintf("problem loading template %s", err.Error()), http.StatusInternalServerError)
+		return
+	}
 
-tmpl.Execute(w, nil)
+	tmpl.Execute(w, nil)
 }
 ```
 
-[`html/template`](https://golang.org/pkg/html/template/) is a Go package for creating HTML. In our case we call `template.ParseFiles`, giving the path of our html file. Assuming there is no error you can then `Execute` the template, which writes it to an `io.Writer`. In our case we want it to `Write` to the internet, so we give it our `http.ResponseWriter`.
+[`html/template`] (https://golang.org/pkg/html/template/)은 HTML을 만들기위한 Go 패키지입니다. 우리의 경우`template.ParseFiles`를 호출하여 html 파일의 경로를 제공합니다. 오류가 없다고 가정하면 템플릿을 '실행'하여 'io.Writer'에 기록 할 수 있습니다. 우리의 경우 인터넷에 '쓰기'를 원하므로 'http.ResponseWriter'를 제공합니다.
 
-As we have not written a test, it would be prudent to manually test our web server just to make sure things are working as we'd hope. Go to `cmd/webserver` and run the `main.go` file. Visit `http://localhost:5000/game`.
+테스트를 작성하지 않았으므로 웹 서버를 수동으로 테스트하여 원하는대로 작동하는지 확인하는 것이 좋습니다. `cmd/webserver`로 이동하여`main.go` 파일을 실행합니다. `http://localhost:5000/game`을 방문하십시오.
 
-You _should_ have got an error about not being able to find the template. You can either change the path to be relative to your folder, or you can have a copy of the `game.html` in the `cmd/webserver` directory. I chose to create a symlink (`ln -s ../../game.html game.html`) to the file inside the root of the project so if I make changes they are reflected when running the server.
+템플릿을 찾을 수 없다는 오류를 대면해야 합니다. 경로를 당신의 폴더에 상대적인 방식으로 변경하거나 `cmd/webserver` 디렉토리에`game.html`의 복사본을 가질 수 있습니다. 나는 프로젝트 루트 내부에 파일에 대한 심볼릭 링크 (`ln -s ../../game.html game.html`)를 생성하기로 선택했습니다. 변경하면 서버를 실행할 때 반영됩니다.
 
-If you make this change and run again you should see our UI.
+이렇게 변경하고 다시 실행하면 UI가 표시됩니다.
 
-Now we need to test that when we get a string over a WebSocket connection to our server that we declare it as a winner of a game.
+이제 우리는 서버에 대한 WebSocket 연결을 통해 문자열을 얻을 때 게임의 승자로 선언하는지 테스트해야합니다.
+## 테스트를 먼저 작성하세요.
 
-## Write the test first
+처음으로 우리는 WebSocket으로 작업 할 수 있도록 외부 라이브러리를 사용할 것입니다.
 
-For the first time we are going to use an external library so that we can work with WebSockets.
+`go get github.com/gorilla/websocket`를 실행하세요.
 
-Run `go get github.com/gorilla/websocket`
-
-This will fetch the code for the excellent [Gorilla WebSocket](https://github.com/gorilla/websocket) library. Now we can update our tests for our new requirement.
-
+이렇게하면 우수한 [Gorilla WebSocket] (https://github.com/gorilla/websocket) 라이브러리의 코드를 가져옵니다. 이제 새로운 요구 사항에 대한 테스트를 업데이트 할 수 있습니다.
 ```go
 t.Run("when we get a message over a websocket it is a winner of a game", func(t *testing.T) {
-store := &StubPlayerStore{}
-winner := "Ruth"
-server := httptest.NewServer(NewPlayerServer(store))
-defer server.Close()
+    store := &StubPlayerStore{}
+    winner := "Ruth"
+    server := httptest.NewServer(NewPlayerServer(store))
+    defer server.Close()
 
-wsURL := "ws" + strings.TrimPrefix(server.URL, "http") + "/ws"
+    wsURL := "ws" + strings.TrimPrefix(server.URL, "http") + "/ws"
 
-ws, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
-if err != nil {
-t.Fatalf("could not open a ws connection on %s %v", wsURL, err)
-}
-defer ws.Close()
+    ws, _, err := websocket.DefaultDialer.Dial(wsURL, nil)
+    if err != nil {
+        t.Fatalf("could not open a ws connection on %s %v", wsURL, err)
+    }
+    defer ws.Close()
 
-if err := ws.WriteMessage(websocket.TextMessage, []byte(winner)); err != nil {
-t.Fatalf("could not send message over ws connection %v", err)
-}
+    if err := ws.WriteMessage(websocket.TextMessage, []byte(winner)); err != nil {
+        t.Fatalf("could not send message over ws connection %v", err)
+    }
 
-AssertPlayerWin(t, store, winner)
+    AssertPlayerWin(t, store, winner)
 })
 ```
 
-Make sure that you have an import for the `websocket` library. My IDE automatically did it for me, so should yours.
+`websocket` 라이브러리를 제대로 import했는지 확인하세요. 내 IDE가 자동으로 import 했으므로 당신의 것도 할 것입니다.
 
-To test what happens from the browser we have to open up our own WebSocket connection and write to it.
+브라우저에서 어떤 일이 발생하는지 테스트하려면 자체 WebSocket 연결을 열고 여기에 작성해야합니다.
 
-Our previous tests around our server just called methods on our server but now we need to have a persistent connection to our server. To do that we use `httptest.NewServer` which takes a `http.Handler` and will spin it up and listen for connections.
+이전 테스트는 서버에서 메소드를 호출했지만 이제 서버에 지속적인 연결을 해야합니다. 이를 위해 우리는`http.Handler`를 가져 와서 연결을 수신하는`httptest.NewServer`를 사용합니다.
 
-Using `websocket.DefaultDialer.Dial` we try to dial in to our server and then we'll try and send a message with our `winner`.
+'websocket.DefaultDialer.Dial'을 사용하여 서버에 메시지를 보내어서 'winner'와 메시지를 보내려고합니다.
 
-Finally we assert on the player store to check the winner was recorded.
+마지막으로 플레이어 store에서 승자가 기록되었는지 확인하기 위해 assert할 것입니다.
 
-## Try to run the test
+## 테스트를 실행하려고 시도합니다.
 ```
 === RUN   TestGame/when_we_get_a_message_over_a_websocket_it_is_a_winner_of_a_game
     --- FAIL: TestGame/when_we_get_a_message_over_a_websocket_it_is_a_winner_of_a_game (0.00s)
         server_test.go:124: could not open a ws connection on ws://127.0.0.1:55838/ws websocket: bad handshake
 ```
 
-We have not changed our server to accept WebSocket connections on `/ws` so we're not shaking hands yet.
+'/ws'에서 WebSocket 연결을 허용하도록 서버를 변경하지 않았으므로 아직 handshacking을 하지 않습니다.
 
-## Write enough code to make it pass
+## 통과 할 수 있도록 충분한 코드 작성합니다.
 
-Add another listing to our router
+라우터에 다른 목록 추가
 
 ```go
 router.Handle("/ws", http.HandlerFunc(p.webSocket))
 ```
 
-Then add our new `webSocket` handler
+그런 다음 새로운 `webSocket` 핸들러를 추가합니다.
 
 ```go
 func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
-upgrader := websocket.Upgrader{
-ReadBufferSize:  1024,
-WriteBufferSize: 1024,
-}
-upgrader.Upgrade(w, r, nil)
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+	}
+	upgrader.Upgrade(w, r, nil)
 }
 ```
 
-To accept a WebSocket connection we `Upgrade` the request. If you now re-run the test you should move on to the next error.
+WebSocket 연결을 수락하기 위해 요청을 'Upgrade'합니다. 이제 테스트를 다시 실행하면 다음 오류로 이동해야 할 것입니다.
 
 ```
 === RUN   TestGame/when_we_get_a_message_over_a_websocket_it_is_a_winner_of_a_game
@@ -290,29 +287,29 @@ To accept a WebSocket connection we `Upgrade` the request. If you now re-run the
         server_test.go:132: got 0 calls to RecordWin want 1
 ```
 
-Now that we have a connection opened, we'll want to listen for a message and then record it as the winner.
+이제 연결이 열렸으므로 메시지를 듣고 승자로 기록하는 것을 원합니다.
 
 ```go
 func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
-upgrader := websocket.Upgrader{
-ReadBufferSize:  1024,
-WriteBufferSize: 1024,
-}
-conn, _ := upgrader.Upgrade(w, r, nil)
-_, winnerMsg, _ := conn.ReadMessage()
-p.store.RecordWin(string(winnerMsg))
+	upgrader := websocket.Upgrader{
+		ReadBufferSize:  1024,
+		WriteBufferSize: 1024,
+	}
+	conn, _ := upgrader.Upgrade(w, r, nil)
+	_, winnerMsg, _ := conn.ReadMessage()
+	p.store.RecordWin(string(winnerMsg))
 }
 ```
 
-(Yes, we're ignoring a lot of errors right now!)
+(예, 우리는 지금 많은 오류를 무시하고 있습니다!)
 
-`conn.ReadMessage()` blocks on waiting for a message on the connection. Once we get one we use it to `RecordWin`. This would finally close the WebSocket connection.
+`conn.ReadMessage ()`는 연결에서 메시지를 기다릴 때 block합니다. 메시지를 받게 되면, 그것을 `RecordWin`에 사용합니다. 이것은 마침내 WebSocket 연결을 닫습니다.
 
-If you try and run the test, it's still failing.
+테스트를 시도하고 실행하면 여전히 실패합니다.
 
-The issue is timing. There is a delay between our WebSocket connection reading the message and recording the win and our test finishes before it happens. You can test this by putting a short `time.Sleep` before the final assertion.
+문제는 타이밍입니다. WebSocket 연결이 메시지를 읽고 승리를 기록하는 사이에 지연이 있으며 우리의 테스트는 그것이 일어나기 전에 완료됩니다. 최종 assertion 앞에 'time.Sleep'을 짧게 입력하여 이를 테스트 할 수 있습니다.
 
-Let's go with that for now but acknowledge that putting in arbitrary sleeps into tests **is very bad practice**.
+지금은 그렇게 갑시다. 그러나 테스트에 임의의 sleep을 취하는 것은 ** 매우 나쁜 습관 **이라는 것을 알아야합니다.
 
 ```go
 time.Sleep(10 * time.Millisecond)
@@ -321,112 +318,112 @@ AssertPlayerWin(t, store, winner)
 
 ## Refactor
 
-We committed many sins to make this test work both in the server code and the test code but remember this is the easiest way for us to work.
+우리는 이 테스트가 서버 코드와 테스트 코드 모두에서 작동하도록하기 위해 많은 죄를 지었지만 이것이 우리가 작업하는 가장 쉬운 방법임을 기억하십시오.
 
-We have nasty, horrible, _working_ software backed by a test, so now we are free to make it nice and know we won't break anything accidentally.
+우리는 테스트로 뒷받침되는 끔찍한 _작동하는_ 소프트웨어를 가지고 있습니다. 그래서 이제 우리는 그것을 멋지게 만들 수 있고 우연히 어떤 것도 깨뜨리지 않을 것이라는 것을 압니다.
 
-Let's start with the server code.
+서버 코드부터 시작하겠습니다.
 
-We can move the `upgrader` to a private value inside our package because we don't need to redeclare it on every WebSocket connection request
+모든 WebSocket 연결 요청에 대해 다시 선언 할 필요가 없기 때문에 `upgrader`를 패키지 내부의 private 값으로 이동할 수 있습니다.
 
 ```go
 var wsUpgrader = websocket.Upgrader{
-ReadBufferSize:  1024,
-WriteBufferSize: 1024,
+	ReadBufferSize:  1024,
+	WriteBufferSize: 1024,
 }
 
 func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
-conn, _ := wsUpgrader.Upgrade(w, r, nil)
-_, winnerMsg, _ := conn.ReadMessage()
-p.store.RecordWin(string(winnerMsg))
+	conn, _ := wsUpgrader.Upgrade(w, r, nil)
+	_, winnerMsg, _ := conn.ReadMessage()
+	p.store.RecordWin(string(winnerMsg))
 }
 ```
 
-Our call to `template.ParseFiles("game.html")` will run on every `GET /game` which means we'll go to the file system on every request even though we have no need to re-parse the template. Let's refactor our code so that we parse the template once in `NewPlayerServer` instead. We'll have to make it so this function can now return an error in case we have problems fetching the template from disk or parsing it.
+`template.ParseFiles ( "game.html")`에 대한 호출은 모든`GET /game`에서 실행됩니다. 즉, 템플릿을 다시 파싱 할 필요가 없더라도 모든 요청에 대해 파일 시스템으로 이동합니다.
 
-Here's the relevant changes to `PlayerServer`
+`PlayerServer`의 관련 변경 사항은 다음과 같습니다.
 
 ```go
 type PlayerServer struct {
-store PlayerStore
-http.Handler
-template *template.Template
+	store PlayerStore
+	http.Handler
+	template *template.Template
 }
 
 const htmlTemplatePath = "game.html"
 
 func NewPlayerServer(store PlayerStore) (*PlayerServer, error) {
-p := new(PlayerServer)
+	p := new(PlayerServer)
 
-tmpl, err := template.ParseFiles(htmlTemplatePath)
+	tmpl, err := template.ParseFiles(htmlTemplatePath)
 
-if err != nil {
-return nil, fmt.Errorf("problem opening %s %v", htmlTemplatePath, err)
-}
+	if err != nil {
+		return nil, fmt.Errorf("problem opening %s %v", htmlTemplatePath, err)
+	}
 
-p.template = tmpl
-p.store = store
+	p.template = tmpl
+	p.store = store
 
-router := http.NewServeMux()
-router.Handle("/league", http.HandlerFunc(p.leagueHandler))
-router.Handle("/players/", http.HandlerFunc(p.playersHandler))
-router.Handle("/game", http.HandlerFunc(p.game))
-router.Handle("/ws", http.HandlerFunc(p.webSocket))
+	router := http.NewServeMux()
+	router.Handle("/league", http.HandlerFunc(p.leagueHandler))
+	router.Handle("/players/", http.HandlerFunc(p.playersHandler))
+	router.Handle("/game", http.HandlerFunc(p.game))
+	router.Handle("/ws", http.HandlerFunc(p.webSocket))
 
-p.Handler = router
+	p.Handler = router
 
-return p, nil
+	return p, nil
 }
 
 func (p *PlayerServer) game(w http.ResponseWriter, r *http.Request) {
-p.template.Execute(w, nil)
+	p.template.Execute(w, nil)
 }
 ```
 
-By changing the signature of `NewPlayerServer` we now have compilation problems. Try and fix them yourself or refer to the source code if you struggle.
+`NewPlayerServer`의 signature 변경함으로써 이제 컴파일 문제가 발생합니다. 직접 시도하고 수정하거나 어려움이 있다면 소스 코드를 참조하십시오.
 
-For the test code I made a helper called `mustMakePlayerServer(t *testing.T, store PlayerStore) *PlayerServer` so that I could hide the error noise away from the tests.
+테스트 코드를 위해`mustMakePlayerServer (t * testing.T, store PlayerStore) * PlayerServer`라는 helper를 만들어 테스트에서 오류 노이즈를 숨길 수있었습니다.
 
 ```go
 func mustMakePlayerServer(t *testing.T, store PlayerStore) *PlayerServer {
-server, err := NewPlayerServer(store)
-if err != nil {
-t.Fatal("problem creating player server", err)
-}
-return server
+	server, err := NewPlayerServer(store)
+	if err != nil {
+		t.Fatal("problem creating player server", err)
+	}
+	return server
 }
 ```
 
-Similarly I created another helper `mustDialWS` so that I could hide nasty error noise when creating the WebSocket connection.
+마찬가지로 WebSocket 연결을 만들 때 불쾌한 오류 노이즈를 숨길 수 있도록 또 다른 helper `mustDialWS`를 만들었습니다.
 
 ```go
 func mustDialWS(t *testing.T, url string) *websocket.Conn {
-ws, _, err := websocket.DefaultDialer.Dial(url, nil)
+	ws, _, err := websocket.DefaultDialer.Dial(url, nil)
 
-if err != nil {
-t.Fatalf("could not open a ws connection on %s %v", url, err)
-}
+	if err != nil {
+		t.Fatalf("could not open a ws connection on %s %v", url, err)
+	}
 
-return ws
+	return ws
 }
 ```
 
-Finally in our test code we can create a helper to tidy up sending messages
+마지막으로 테스트 코드에서 메시지 전송을 정리하는 helper를 만들 수 있습니다.
 
 ```go
 func writeWSMessage(t testing.TB, conn *websocket.Conn, message string) {
-t.Helper()
-if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
-t.Fatalf("could not send message over ws connection %v", err)
-}
+	t.Helper()
+	if err := conn.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
+		t.Fatalf("could not send message over ws connection %v", err)
+	}
 }
 ```
 
-Now the tests are passing try running the server and declare some winners in `/game`. You should see them recorded in `/league`. Remember that every time we get a winner we _close the connection_, you will need to refresh the page to open the connection again.
+이제 테스트가 통과되었습니다. 서버를 실행하고`/game`에서 승자를 선언하십시오. `/league`에 기록 된 것을 볼 수 있습니다. 당첨자를 얻을 때마다 _연결을 닫음_을 기억하세요. 연결을 다시 열려면 페이지를 새로 고침해야합니다.
 
-We've made a trivial web form that lets users record the winner of a game. Let's iterate on it to make it so the user can start a game by providing a number of players and the server will push messages to the client informing them of what the blind value is as time passes.
+사용자가 게임의 승자를 기록 할 수 있도록 간단한 웹 양식을 만들었습니다. 사용자가 많은 플레이어와 게임을 시작할 수 있도록 반복하고 서버는 시간이 지남에 따라 블라인드 값이 무엇인지 알려주는 메시지를 클라이언트에 푸시합니다.
 
-First of all update `game.html` to update our client side code for the new requirements
+우선`game.html`을 업데이트하여 새로운 요구 사항에 맞게 클라이언트 측 코드를 업데이트하십시오.
 
 ```html
 <!DOCTYPE html>
@@ -505,152 +502,152 @@ First of all update `game.html` to update our client side code for the new requi
 </html>
 ```
 
-The main changes is bringing in a section to enter the number of players and a section to display the blind value. We have a little logic to show/hide the user interface depending on the stage of the game.
+주요 변경 사항은 플레이어 수를 입력하는 섹션과 블라인드 값을 표시하는 섹션을 가져 오는 것입니다. 게임의 단계에 따라 사용자 인터페이스를 표시하거나 숨기는 약간의 logic이 있습니다.
 
-Any message we receive via `conn.onmessage` we assume to be blind alerts and so we set the `blindContainer.innerText` accordingly.
+'conn.onmessage'를 통해 수신하는 모든 메시지는 블라인드 경고라고 가정하므로 이에 따라 'blindContainer.innerText'를 설정합니다.
 
-How do we go about sending the blind alerts? In the previous chapter we introduced the idea of `Game` so our CLI code could call a `Game` and everything else would be taken care of including scheduling blind alerts. This turned out to be a good separation of concern.
+앞 장에서는 `Game`에 대한 아이디어를 소개하여 CLI 코드가 `Game`을 호출할 수 있고 이것이 블라인드 알림 스케쥴링을 포함한 모든 사항을 처리할 수 있도록 했습니다.
 
 ```go
 type Game interface {
-Start(numberOfPlayers int)
-Finish(winner string)
+	Start(numberOfPlayers int)
+	Finish(winner string)
 }
 ```
 
-When the user was prompted in the CLI for number of players it would `Start` the game which would kick off the blind alerts and when the user declared the winner they would `Finish`. This is the same requirements we have now, just a different way of getting the inputs; so we should look to re-use this concept if we can.
+사용자가 CLI에서 플레이어 수를 묻는 메시지를 받으면 게임을 `Start`하여 블라인드 경고를 시작할 것이고, 사용자가 승자를 선언하면 `Finish`가 될 것입니다. 이것은 우리가 현재 가지고있는 것과 동일한 요구 사항이며 입력을 얻는 다른 방법입니다. 가능하다면 이 개념을 재사용해야합니다.
 
-Our "real" implementation of `Game` is `TexasHoldem`
+`Game`의 "실제"구현은 `TexasHoldem`입니다.
 
 ```go
 type TexasHoldem struct {
-alerter BlindAlerter
-store   PlayerStore
+	alerter BlindAlerter
+	store   PlayerStore
 }
 ```
 
-By sending in a `BlindAlerter` `TexasHoldem` can schedule blind alerts to be sent to _wherever_
+`BlindAlerter`에서 `TexasHoldem`을 보냄으로써, _언제나_ 블라인드 경고가 전송되도록 스케쥴할 수 있습니다.
 
 ```go
 type BlindAlerter interface {
-ScheduleAlertAt(duration time.Duration, amount int)
+	ScheduleAlertAt(duration time.Duration, amount int)
 }
 ```
 
-And as a reminder, here is our implementation of the `BlindAlerter` we use in the CLI.
+그리고 상기시켜 드리자면, 이것은 우리가 CLI에서 사용했던 `BlindAlerter` 구현입니다.
 
 ```go
 func StdOutAlerter(duration time.Duration, amount int) {
-time.AfterFunc(duration, func() {
-fmt.Fprintf(os.Stdout, "Blind is now %d\n", amount)
-})
+	time.AfterFunc(duration, func() {
+		fmt.Fprintf(os.Stdout, "Blind is now %d\n", amount)
+	})
 }
 ```
 
-This works in CLI because we _always want to send the alerts to `os.Stdout`_ but this won't work for our web server. For every request we get a new `http.ResponseWriter` which we then upgrade to `*websocket.Conn`. So we can't know when constructing our dependencies where our alerts need to go.
+이것은 _항상 `os.Stdout`에 경고를 보내기_를 원하기 때문에 CLI에서는 작동하지만 웹 서버에서는 작동하지 않습니다. 모든 요청에 대해 새로운 `http.ResponseWriter`를 얻은 다음`*websocket.Conn`으로 업그레이드합니다. 따라서 종속성을 구성 할 때 우리의 경고가 어디로 이동해야할 지 알 수 없습니다.
 
-For that reason we need to change `BlindAlerter.ScheduleAlertAt` so that it takes a destination for the alerts so that we can re-use it in our webserver.
+따라서 그것을 경고를 위한 목적지를 가지게 하여 웹 서버에서도 재사용할 수 있도록 BlindAlerter.ScheduleAlertAt`을 변경해야합니다.
 
-Open BlindAlerter.go and add the parameter `to io.Writer`
+BlindAlerter.go를 열고 'to io.Writer' 매개 변수를 추가합니다.
 
 ```go
 type BlindAlerter interface {
-ScheduleAlertAt(duration time.Duration, amount int, to io.Writer)
+	ScheduleAlertAt(duration time.Duration, amount int, to io.Writer)
 }
 
 type BlindAlerterFunc func(duration time.Duration, amount int, to io.Writer)
 
 func (a BlindAlerterFunc) ScheduleAlertAt(duration time.Duration, amount int, to io.Writer) {
-a(duration, amount, to)
+	a(duration, amount, to)
 }
 ```
 
-The idea of a `StdoutAlerter` doesn't fit our new model so just rename it to `Alerter`
+`StdoutAlerter`의 아이디어는 우리의 새 모델에 맞지 않으므로 이름을 `Alerter`로 변경합시다.
 
 ```go
 func Alerter(duration time.Duration, amount int, to io.Writer) {
-time.AfterFunc(duration, func() {
-fmt.Fprintf(to, "Blind is now %d\n", amount)
-})
+	time.AfterFunc(duration, func() {
+		fmt.Fprintf(to, "Blind is now %d\n", amount)
+	})
 }
 ```
 
-If you try and compile, it will fail in `TexasHoldem` because it is calling `ScheduleAlertAt` without a destination, to get things compiling again _for now_ hard-code it to `os.Stdout`.
+컴파일을 시도하면 목적지없이`ScheduleAlertAt`을 호출하기 때문에`TexasHoldem`에서 실패하여 다시 컴파일을 하기 위해서는 _목적지를 `os.Stdout`로 하드 코딩_합니다.
 
-Try and run the tests and they will fail because `SpyBlindAlerter` no longer implements `BlindAlerter`, fix this by updating the signature of `ScheduleAlertAt`, run the tests and we should still be green.
+테스트를 실행하면`SpyBlindAlerter`가 더 이상`BlindAlerter`를 구현하지 않기 때문에 실패합니다.`ScheduleAlertAt`의 signature를 업데이트하여이 문제를 해결하고 테스트를 실행하면 여전히 녹색이어야합니다.
 
-It doesn't make any sense for `TexasHoldem` to know where to send blind alerts. Let's now update `Game` so that when you start a game you declare _where_ the alerts should go.
+'TexasHoldem'이 블라인드 알림을 보낼 위치를 알게 하는 것은 말이되지 않습니다. 이제 게임을 시작할 때 _어디_로 경고 가야할 지 선언하기 위해 `Game`을 업데이트하겠습니다.
 
 ```go
 type Game interface {
-Start(numberOfPlayers int, alertsDestination io.Writer)
-Finish(winner string)
+	Start(numberOfPlayers int, alertsDestination io.Writer)
+	Finish(winner string)
 }
 ```
 
-Let the compiler tell you what you need to fix. The change isn't so bad:
+컴파일러가 수정해야 할 사항을 알려줍니다. 이 변화는 그렇게 나쁘지 않습니다.
 
-- Update `TexasHoldem` so it properly implements `Game`
-- In `CLI` when we start the game, pass in our `out` property (`cli.game.Start(numberOfPlayers, cli.out)`)
-- In `TexasHoldem`'s test i use `game.Start(5, ioutil.Discard)` to fix the compilation problem and configure the alert output to be discarded
+-`TexasHoldem`을 업데이트하여`Game`을 올바르게 구현합니다.
+-`CLI`에서 게임을 시작할 때 `out` 속성 (`cli.game.Start (numberOfPlayers, cli.out)`)을 전달합니다.
+-`TexasHoldem`의 테스트에서`game.Start (5, ioutil.Discard)`를 사용하여 컴파일 문제를 수정하고 경고 출력을 버리도록 구성합니다.
 
-If you've got everything right, everything should be green! Now we can try and use `Game` within `Server`.
+모든 것이 올바르게 되었다면 모든 것이 녹색이어야합니다! 이제`Server` 내에서`Game`을 사용해 볼 수 있습니다.
 
-## Write the test first
+## 테스트를 먼저 작성하세요.
 
-The requirements of `CLI` and `Server` are the same! It's just the delivery mechanism is different.
+`CLI`와`Server`의 요구 사항은 동일합니다! 단순히 전달 메커니즘이 다릅니다.
 
-Let's take a look at our `CLI` test for inspiration.
+영감을 얻기위해 'CLI'테스트를 살펴 보겠습니다.
 
 ```go
 t.Run("start game with 3 players and finish game with 'Chris' as winner", func(t *testing.T) {
-game := &GameSpy{}
+    game := &GameSpy{}
 
-out := &bytes.Buffer{}
-in := userSends("3", "Chris wins")
+    out := &bytes.Buffer{}
+    in := userSends("3", "Chris wins")
 
-poker.NewCLI(in, out, game).PlayPoker()
+    poker.NewCLI(in, out, game).PlayPoker()
 
-assertMessagesSentToUser(t, out, poker.PlayerPrompt)
-assertGameStartedWith(t, game, 3)
-assertFinishCalledWith(t, game, "Chris")
+    assertMessagesSentToUser(t, out, poker.PlayerPrompt)
+    assertGameStartedWith(t, game, 3)
+    assertFinishCalledWith(t, game, "Chris")
 })
 ```
 
-It looks like we should be able to test drive out a similar outcome using `GameSpy`
+'GameSpy'를 사용하여 유사한 결과를 테스트 할 수있을 것 같습니다.
 
-Replace the old websocket test with the following
+이전 websocket 테스트를 다음으로 교체하십시오.
 
 ```go
 t.Run("start a game with 3 players and declare Ruth the winner", func(t *testing.T) {
-game := &poker.GameSpy{}
-winner := "Ruth"
-server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
-ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
+    game := &poker.GameSpy{}
+    winner := "Ruth"
+    server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
+    ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
 
-defer server.Close()
-defer ws.Close()
+    defer server.Close()
+    defer ws.Close()
 
-writeWSMessage(t, ws, "3")
-writeWSMessage(t, ws, winner)
+    writeWSMessage(t, ws, "3")
+    writeWSMessage(t, ws, winner)
 
-time.Sleep(10 * time.Millisecond)
-assertGameStartedWith(t, game, 3)
-assertFinishCalledWith(t, game, winner)
+    time.Sleep(10 * time.Millisecond)
+    assertGameStartedWith(t, game, 3)
+    assertFinishCalledWith(t, game, winner)
 })
 ```
 
-- As discussed we create a spy `Game` and pass it into `mustMakePlayerServer` (be sure to update the helper to support this).
-- We then send the web socket messages for a game.
-- Finally we assert that the game is started and finished with what we expect.
+-논의했듯이 스파이`Game`을 만들고`mustMakePlayerServer`에 전달합니다 (이를 지원하도록 helper를 업데이트해야합니다).
+-그런 다음 게임에 위해 웹 소켓 메시지를 보냅니다.
+-마지막으로 우리가 기대하는대로 게임이 시작되고 끝났다고 assert합니다.
 
-## Try to run the test
+## 테스트를 실행하세요.
 
-You'll have a number of compilation errors around `mustMakePlayerServer` in other tests. Introduce an unexported variable `dummyGame` and use it through all the tests that aren't compiling
+다른 테스트에서`mustMakePlayerServer` 와 관련한 많은 컴파일 오류를 가질 것입니. Unexported 변수인 'dummyGame'을 도입하고 컴파일하지 않는 모든 테스트를 통해 사용합니다.
 
 ```go
 var (
-dummyGame = &GameSpy{}
+	dummyGame = &GameSpy{}
 )
 ```
 
@@ -670,7 +667,7 @@ Just add it as an argument for now just to get the test running
 func NewPlayerServer(store PlayerStore, game Game) (*PlayerServer, error) {
 ```
 
-Finally!
+마침내!
 
 ```
 === RUN   TestGame/start_a_game_with_3_players_and_declare_Ruth_the_winner
@@ -687,10 +684,10 @@ We need to add `Game` as a field to `PlayerServer` so that it can use it when it
 
 ```go
 type PlayerServer struct {
-store PlayerStore
-http.Handler
-template *template.Template
-game Game
+	store PlayerStore
+	http.Handler
+	template *template.Template
+	game Game
 }
 ```
 
@@ -700,31 +697,31 @@ Next lets assign it in our constructor
 
 ```go
 func NewPlayerServer(store PlayerStore, game Game) (*PlayerServer, error) {
-p := new(PlayerServer)
+	p := new(PlayerServer)
 
-tmpl, err := template.ParseFiles(htmlTemplatePath)
+	tmpl, err := template.ParseFiles(htmlTemplatePath)
 
-if err != nil {
-return nil, fmt.Errorf("problem opening %s %v", htmlTemplatePath, err)
-}
+	if err != nil {
+		return nil, fmt.Errorf("problem opening %s %v", htmlTemplatePath, err)
+	}
 
-p.game = game
+	p.game = game
 
-// etc
+	// etc
 ```
 
 Now we can use our `Game` within `webSocket`.
 
 ```go
 func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
-conn, _ := wsUpgrader.Upgrade(w, r, nil)
+	conn, _ := wsUpgrader.Upgrade(w, r, nil)
 
-_, numberOfPlayersMsg, _ := conn.ReadMessage()
-numberOfPlayers, _ := strconv.Atoi(string(numberOfPlayersMsg))
-p.game.Start(numberOfPlayers, ioutil.Discard) //todo: Don't discard the blinds messages!
+	_, numberOfPlayersMsg, _ := conn.ReadMessage()
+	numberOfPlayers, _ := strconv.Atoi(string(numberOfPlayersMsg))
+	p.game.Start(numberOfPlayers, ioutil.Discard) //todo: Don't discard the blinds messages!
 
-_, winner, _ := conn.ReadMessage()
-p.game.Finish(string(winner))
+	_, winner, _ := conn.ReadMessage()
+	p.game.Finish(string(winner))
 }
 ```
 
@@ -736,29 +733,29 @@ For now start the web server up. You'll need to update the `main.go` to pass a `
 
 ```go
 func main() {
-db, err := os.OpenFile(dbFileName, os.O_RDWR|os.O_CREATE, 0666)
+	db, err := os.OpenFile(dbFileName, os.O_RDWR|os.O_CREATE, 0666)
 
-if err != nil {
-log.Fatalf("problem opening %s %v", dbFileName, err)
-}
+	if err != nil {
+		log.Fatalf("problem opening %s %v", dbFileName, err)
+	}
 
-store, err := poker.NewFileSystemPlayerStore(db)
+	store, err := poker.NewFileSystemPlayerStore(db)
 
-if err != nil {
-log.Fatalf("problem creating file system player store, %v ", err)
-}
+	if err != nil {
+		log.Fatalf("problem creating file system player store, %v ", err)
+	}
 
-game := poker.NewTexasHoldem(poker.BlindAlerterFunc(poker.Alerter), store)
+	game := poker.NewTexasHoldem(poker.BlindAlerterFunc(poker.Alerter), store)
 
-server, err := poker.NewPlayerServer(store, game)
+	server, err := poker.NewPlayerServer(store, game)
 
-if err != nil {
-log.Fatalf("problem creating player server %v", err)
-}
+	if err != nil {
+		log.Fatalf("problem creating player server %v", err)
+	}
 
-if err := http.ListenAndServe(":5000", server); err != nil {
-log.Fatalf("could not listen on port 5000 %v", err)
-}
+	if err := http.ListenAndServe(":5000", server); err != nil {
+		log.Fatalf("could not listen on port 5000 %v", err)
+	}
 }
 ```
 
@@ -772,25 +769,25 @@ The way we're using WebSockets is fairly basic and the error handling is fairly 
 
 ```go
 type playerServerWS struct {
-*websocket.Conn
+	*websocket.Conn
 }
 
 func newPlayerServerWS(w http.ResponseWriter, r *http.Request) *playerServerWS {
-conn, err := wsUpgrader.Upgrade(w, r, nil)
+	conn, err := wsUpgrader.Upgrade(w, r, nil)
 
-if err != nil {
-log.Printf("problem upgrading connection to WebSockets %v\n", err)
-}
+	if err != nil {
+		log.Printf("problem upgrading connection to WebSockets %v\n", err)
+	}
 
-return &playerServerWS{conn}
+	return &playerServerWS{conn}
 }
 
 func (w *playerServerWS) WaitForMsg() string {
-_, msg, err := w.ReadMessage()
-if err != nil {
-log.Printf("error reading from websocket %v\n", err)
-}
-return string(msg)
+	_, msg, err := w.ReadMessage()
+	if err != nil {
+		log.Printf("error reading from websocket %v\n", err)
+	}
+	return string(msg)
 }
 ```
 
@@ -798,14 +795,14 @@ Now the server code is a bit simplified
 
 ```go
 func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
-ws := newPlayerServerWS(w, r)
+	ws := newPlayerServerWS(w, r)
 
-numberOfPlayersMsg := ws.WaitForMsg()
-numberOfPlayers, _ := strconv.Atoi(numberOfPlayersMsg)
-p.game.Start(numberOfPlayers, ioutil.Discard) //todo: Don't discard the blinds messages!
+	numberOfPlayersMsg := ws.WaitForMsg()
+	numberOfPlayers, _ := strconv.Atoi(numberOfPlayersMsg)
+	p.game.Start(numberOfPlayers, ioutil.Discard) //todo: Don't discard the blinds messages!
 
-winner := ws.WaitForMsg()
-p.game.Finish(winner)
+	winner := ws.WaitForMsg()
+	p.game.Finish(winner)
 }
 ```
 
@@ -829,12 +826,12 @@ Give it a go:
 
 ```go
 func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
-ws := newPlayerServerWS(w, r)
+	ws := newPlayerServerWS(w, r)
 
-numberOfPlayersMsg := ws.WaitForMsg()
-numberOfPlayers, _ := strconv.Atoi(numberOfPlayersMsg)
-p.game.Start(numberOfPlayers, ws)
-//etc...
+	numberOfPlayersMsg := ws.WaitForMsg()
+	numberOfPlayers, _ := strconv.Atoi(numberOfPlayersMsg)
+	p.game.Start(numberOfPlayers, ws)
+	//etc...
 ```
 
 The compiler complains
@@ -848,13 +845,13 @@ It seems the obvious thing to do, would be to make it so `playerServerWS` _does_
 
 ```go
 func (w *playerServerWS) Write(p []byte) (n int, err error) {
-err = w.WriteMessage(websocket.TextMessage, p)
+	err = w.WriteMessage(websocket.TextMessage, p)
 
-if err != nil {
-return 0, err
-}
+	if err != nil {
+		return 0, err
+	}
 
-return len(p), nil
+	return len(p), nil
 }
 ```
 
@@ -882,12 +879,12 @@ Currently our `GameSpy` does not send any data to `out` when you call `Start`. W
 
 ```go
 type GameSpy struct {
-StartCalled     bool
-StartCalledWith int
-BlindAlert      []byte
+	StartCalled     bool
+	StartCalledWith int
+	BlindAlert      []byte
 
-FinishedCalled   bool
-FinishCalledWith string
+	FinishedCalled   bool
+	FinishCalledWith string
 }
 ```
 
@@ -897,9 +894,9 @@ Update `GameSpy` `Start` to send the canned message to `out`.
 
 ```go
 func (g *GameSpy) Start(numberOfPlayers int, out io.Writer) {
-g.StartCalled = true
-g.StartCalledWith = numberOfPlayers
-out.Write(g.BlindAlert)
+	g.StartCalled = true
+	g.StartCalledWith = numberOfPlayers
+	out.Write(g.BlindAlert)
 }
 ```
 
@@ -909,28 +906,28 @@ Finally we can update the test
 
 ```go
 t.Run("start a game with 3 players, send some blind alerts down WS and declare Ruth the winner", func(t *testing.T) {
-wantedBlindAlert := "Blind is 100"
-winner := "Ruth"
+    wantedBlindAlert := "Blind is 100"
+    winner := "Ruth"
 
-game := &GameSpy{BlindAlert: []byte(wantedBlindAlert)}
-server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
-ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
+    game := &GameSpy{BlindAlert: []byte(wantedBlindAlert)}
+    server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
+    ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
 
-defer server.Close()
-defer ws.Close()
+    defer server.Close()
+    defer ws.Close()
 
-writeWSMessage(t, ws, "3")
-writeWSMessage(t, ws, winner)
+    writeWSMessage(t, ws, "3")
+    writeWSMessage(t, ws, winner)
 
-time.Sleep(10 * time.Millisecond)
-assertGameStartedWith(t, game, 3)
-assertFinishCalledWith(t, game, winner)
+    time.Sleep(10 * time.Millisecond)
+    assertGameStartedWith(t, game, 3)
+    assertFinishCalledWith(t, game, winner)
 
-_, gotBlindAlert, _ := ws.ReadMessage()
+    _, gotBlindAlert, _ := ws.ReadMessage()
 
-if string(gotBlindAlert) != wantedBlindAlert {
-t.Errorf("got blind alert %q, want %q", string(gotBlindAlert), wantedBlindAlert)
-}
+    if string(gotBlindAlert) != wantedBlindAlert {
+        t.Errorf("got blind alert %q, want %q", string(gotBlindAlert), wantedBlindAlert)
+    }
 })
 ```
 
@@ -948,20 +945,20 @@ We should never have tests that hang so let's introduce a way of handling code t
 
 ```go
 func within(t testing.TB, d time.Duration, assert func()) {
-t.Helper()
+	t.Helper()
 
-done := make(chan struct{}, 1)
+	done := make(chan struct{}, 1)
 
-go func() {
-assert()
-done <- struct{}{}
-}()
+	go func() {
+		assert()
+		done <- struct{}{}
+	}()
 
-select {
-case <-time.After(d):
-t.Error("timed out")
-case <-done:
-}
+	select {
+	case <-time.After(d):
+		t.Error("timed out")
+	case <-done:
+	}
 }
 ```
 
@@ -973,10 +970,10 @@ Finally I made a helper function for our assertion just to make things a bit nea
 
 ```go
 func assertWebsocketGotMsg(t *testing.T, ws *websocket.Conn, want string) {
-_, msg, _ := ws.ReadMessage()
-if string(msg) != want {
-t.Errorf(`got "%s", want "%s"`, string(msg), want)
-}
+	_, msg, _ := ws.ReadMessage()
+	if string(msg) != want {
+		t.Errorf(`got "%s", want "%s"`, string(msg), want)
+	}
 }
 ```
 
@@ -984,24 +981,24 @@ Here's how the test reads now
 
 ```go
 t.Run("start a game with 3 players, send some blind alerts down WS and declare Ruth the winner", func(t *testing.T) {
-wantedBlindAlert := "Blind is 100"
-winner := "Ruth"
+    wantedBlindAlert := "Blind is 100"
+    winner := "Ruth"
 
-game := &GameSpy{BlindAlert: []byte(wantedBlindAlert)}
-server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
-ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
+    game := &GameSpy{BlindAlert: []byte(wantedBlindAlert)}
+    server := httptest.NewServer(mustMakePlayerServer(t, dummyPlayerStore, game))
+    ws := mustDialWS(t, "ws"+strings.TrimPrefix(server.URL, "http")+"/ws")
 
-defer server.Close()
-defer ws.Close()
+    defer server.Close()
+    defer ws.Close()
 
-writeWSMessage(t, ws, "3")
-writeWSMessage(t, ws, winner)
+    writeWSMessage(t, ws, "3")
+    writeWSMessage(t, ws, winner)
 
-time.Sleep(tenMS)
+    time.Sleep(tenMS)
 
-assertGameStartedWith(t, game, 3)
-assertFinishCalledWith(t, game, winner)
-within(t, tenMS, func() { assertWebsocketGotMsg(t, ws, wantedBlindAlert) })
+    assertGameStartedWith(t, game, 3)
+    assertFinishCalledWith(t, game, winner)
+    within(t, tenMS, func() { assertWebsocketGotMsg(t, ws, wantedBlindAlert) })
 })
 ```
 
@@ -1022,14 +1019,14 @@ Finally we can now change our server code so it sends our WebSocket connection t
 
 ```go
 func (p *PlayerServer) webSocket(w http.ResponseWriter, r *http.Request) {
-ws := newPlayerServerWS(w, r)
+	ws := newPlayerServerWS(w, r)
 
-numberOfPlayersMsg := ws.WaitForMsg()
-numberOfPlayers, _ := strconv.Atoi(numberOfPlayersMsg)
-p.game.Start(numberOfPlayers, ws)
+	numberOfPlayersMsg := ws.WaitForMsg()
+	numberOfPlayers, _ := strconv.Atoi(numberOfPlayersMsg)
+	p.game.Start(numberOfPlayers, ws)
 
-winner := ws.WaitForMsg()
-p.game.Finish(winner)
+	winner := ws.WaitForMsg()
+	p.game.Finish(winner)
 }
 ```
 
@@ -1043,15 +1040,15 @@ Here's how you can do it for `assertFinishCalledWith` and you can use the same a
 
 ```go
 func assertFinishCalledWith(t testing.TB, game *GameSpy, winner string) {
-t.Helper()
+	t.Helper()
 
-passed := retryUntil(500*time.Millisecond, func() bool {
-return game.FinishCalledWith == winner
-})
+	passed := retryUntil(500*time.Millisecond, func() bool {
+		return game.FinishCalledWith == winner
+	})
 
-if !passed {
-t.Errorf("expected finish called with %q but got %q", winner, game.FinishCalledWith)
-}
+	if !passed {
+		t.Errorf("expected finish called with %q but got %q", winner, game.FinishCalledWith)
+	}
 }
 ```
 
@@ -1059,13 +1056,13 @@ Here is how `retryUntil` is defined
 
 ```go
 func retryUntil(d time.Duration, f func() bool) bool {
-deadline := time.Now().Add(d)
-for time.Now().Before(deadline) {
-if f() {
-return true
-}
-}
-return false
+	deadline := time.Now().Add(d)
+	for time.Now().Before(deadline) {
+		if f() {
+			return true
+		}
+	}
+	return false
 }
 ```
 
