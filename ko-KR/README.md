@@ -117,6 +117,7 @@
 - [SangjunCha](https://github.com/SangjunCha-dev)
 - [hywn](https://github.com/14hhan)
 - [vbbono] (https://github.com/vbbono)
+- [KyusikKim](https://github.com/zajann)
 
 
 ## 피드백
