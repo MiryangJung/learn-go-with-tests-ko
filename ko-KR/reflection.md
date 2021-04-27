@@ -1,6 +1,6 @@
 # Reflection
 
-**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/MiryangJung/learn-go-with-tests-ko/tree/main/select)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/reflection)**
 
 [From Twitter](https://twitter.com/peterbourgon/status/1011403901419937792?s=09)
 
