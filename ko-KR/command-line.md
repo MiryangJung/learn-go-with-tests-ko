@@ -1,6 +1,6 @@
 # Command line and project structure
 
-**[이 챕터에 사용되는 모든 코드는 여기서 찾을 수 있다](https://github.com/quii/learn-go-with-tests/tree/main/command-line)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/command-line)**
 
 Product Owner는 command line에서 작동하는 두번째 애플리케이션을 도입해서 _피봇_ 하고자 한다. (스타트업 기업들이 초기의 사업의 목표나 서비스 운영방식등을 바꿔 다른 사업으로 이전하는 것)
 

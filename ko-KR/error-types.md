@@ -1,6 +1,6 @@
 # 에러 타입(Error types)
 
-**[이 글에 소개된 모든 코드는 여기서 확인할 수 있다](https://github.com/MiryangJung/learn-go-with-tests-ko/tree/master/q-and-a/error-types)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/MiryangJung/learn-go-with-tests-ko/tree/master/q-and-a/error-types)**
 
 **자신만의 에러 타입을 만드는 것은, 코드를 정돈하고, 사용하고, 테스트하기 쉽게 만드는 우아한 방법일 수 있다.**
 

@@ -1,6 +1,6 @@
 # HTTP Server
 
-**[관련 코드 보기(클릭)](https://github.com/quii/learn-go-with-tests/tree/main/http-server)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/http-server)**
 
 사용자가 자신이 얼마나 많은 게임을 이겼는지 확인할 수 있는 웹서버를 만들어야 한다. 
 

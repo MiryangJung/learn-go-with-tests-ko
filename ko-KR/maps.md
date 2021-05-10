@@ -1,6 +1,6 @@
 # 맵
 
-**[이 챕터의 모든 코드는 여기에서 확인할 수 있다](https://github.com/quii/learn-go-with-tests/tree/main/maps)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/maps)**
 
 [배열과 슬라이스](arrays-and-slices.md)에서 값을 순서대로 저장하는 방법을 다뤘다. 이번에는 항목을 `key`에 따라 저장하고 이렇게 저장한 `key`를 빠르게 찾는 방법을 살펴볼 것이다.
 

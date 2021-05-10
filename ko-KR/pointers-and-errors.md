@@ -1,6 +1,6 @@
 #  포인터 & 에러
 
-**[이 챕터에서 사용되는 모든 코드는 여기서 찾을 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/pointers)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/pointers)**
 
 지난번 섹션에서 저희는 한 개념 안에 여러 많은 수의 값을 포함 할 수 있는 구조체에 대해서 배웠다.
 

@@ -1,6 +1,6 @@
 # 동시성
 
-**[이 챕터에서 사용되는 모든 코드는 여기서 찾을 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/concurrency)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/concurrency)**
 
 생각해 보자: 동료가 URL 목록의 상태를 확인하는 기능인 `CheckWebsites` 함수를 작성했다.
 

@@ -1,6 +1,6 @@
 # HTTP Handlers Revisited
 
-**[해당 챕터의 모든 코드는 여기에서 확인할 수 있다](https://github.com/quii/learn-go-with-tests/tree/main/q-and-a/http-handlers-revisited)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/q-and-a/http-handlers-revisited)**
 
 이 책은 이미 [HTTP 핸들러 테스트하기](http-server.md)에 대한 챕터를 가지고 있지만, 여기에서는 그것들을 디자인하는 것에 대해 더 광범위한 논의를 할 것이기에 테스트가 간단하다.
 

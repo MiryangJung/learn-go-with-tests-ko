@@ -1,6 +1,6 @@
 # Sync
 
-**[You can find all the code for this chapter here](https://github.com/quii/learn-go-with-tests/tree/main/sync)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/sync)**
 
 안전하게 동시적으로 (concurrently) 사용할 수 있는 카운터를 작성한다
 

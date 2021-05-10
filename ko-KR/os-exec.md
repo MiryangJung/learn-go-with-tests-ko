@@ -1,6 +1,6 @@
 # OS Exec
 
-**[You can find all the code here](https://github.com/quii/learn-go-with-tests/tree/main/q-and-a/os-exec)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/q-and-a/os-exec)**
 
 [keith6014](https://www.reddit.com/user/keith6014) 라는 유저가 [reddit](https://www.reddit.com/r/golang/comments/aaz8ji/testdata_and_function_setup_help/) 에 다음과 같이 물었다.
 

@@ -1,6 +1,6 @@
 # 반복 
 
-**[이 장의 모든 코드는 여기에서 찾을 수 있다](https://github.com/quii/learn-go-with-tests/tree/main/for)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/for)**
 
 Go에서 반복적인 작업을 하기 위해서는 `for`가 필요하다. Go에는 `while`, `do`, `until` 같은 키워드가 없고 오직 `for`만 사용할 수 있다. 그건 좋은 일이다.
 

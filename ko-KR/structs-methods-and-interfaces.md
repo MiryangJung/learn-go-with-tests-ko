@@ -1,6 +1,6 @@
 # 구조체, 메서드 & 인터페이스 (Structs, methods & interfaces)
 
-**[이 챕터에서 사용되는 모든 코드는 여기서 찾을 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/structs)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/structs)**
 
 높이와 너비가 주어진 사각형의 둘레를 계산하는 기하학 코드가 필요하다고 가정한다. `Perimeter(width float64, height float64)` 함수를 작성할 수 있다. 여기서 `float64`는 `123.45` 같은 부동 소수점 수에 대한 것이다.
 

@@ -1,6 +1,6 @@
 # 컨텍스트
 
-**[이 챕터의 모든 코드를 이 곳에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/context)**
+**[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/context)**
 
 소프트웨어는 종종 오랜 기간 실행되고 리소스를 많이 점유하는 프로세스(혹은 고루틴)를 실행한다. 만약 프로세스를 시작한 작업이 어떠한 이유로 인하여 취소되거나 실패할 경우 프로그램에서 실행된 프로세스들을 일관된 방법으로 멈춰줄 필요가 있다.
 
