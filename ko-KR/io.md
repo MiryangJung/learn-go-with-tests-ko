@@ -2,9 +2,9 @@
 
 **[이 챕터의 모든 코드는 여기에서 확인할 수 있다.](https://github.com/quii/learn-go-with-tests/tree/main/io)**
 
-[이전 챕터에서](json.md) 우리는 어플리케이션에 새로운 엔드포인트 `league`를 추가하는 과정을 계속 반복해왔다. 그 과정에서 우리는 JSON을 다루는 법, 타입을 임베딩하는 법 그리고 라우팅하는 법을 배웠다.
+[이전 챕터에서](json.md) 우리는 어플리케이션에 새로운 엔드포인트 `league`를 추가하는 과정을 계속 반복해왔다. 그 과정에서 JSON을 다루는 법, 타입을 임베딩하는 법 그리고 라우팅하는 법을 배울 수 있었다.
 
-프로덕트 오너는 서버가 재시작 될 때 소프트웨어가 점수들을 잃을까 약간 불안해한다. 왜냐하면 우리는 스토어를 인메모리로 구현했기 때문이다. 게다가 그녀는 우리가 `league` 엔드포인트가 이긴 횟수를 기준으로 정렬한 선수들을 반환해야 하는 것을 해석하지 못하는 것이 만족스럽지 않다!
+우리의 프로덕트 오너는 서버가 재시작 될 때 소프트웨어가 선수들의 점수들을 잃을까 조금 불안해한다. 왜냐하면 우리가 스토어를 인메모리로 구현했기 때문이다. 게다가 그녀는 우리가 `league` 엔드포인트가 이긴 횟수를 기준으로 정렬한 선수들을 반환해야 하는 것을 이해하지 못하는 것이 만족스러워하지 않는다!
 
 ## 지금까지의 코드
 
@@ -135,11 +135,11 @@ func main() {
 
 코드에 해당하는 테스트들은 챕터 상단의 링크에서 확인할 수 있다.
 
-## 데이터를 저장한다.
+## 데이터를 저장하기
 
-사용할 수 있는 데이터베이스는 많지만 우리는 매우 간단한 접근을 할 것 이다. 우리는 이 어플리케이션의 데이터를 JSON 파일의 형태로 저장할 것이다.
+이를 위해 사용할 수 있는 데이터베이스는 수십가지가 있지만 우리는 매우 간단한 접근 방식을 선택할 것 이다. 우리는 이 어플리케이션의 데이터를 파일에 JSON으로 저장할 것이다.
 
-이 접근 방식은 데이터를 매우 이동이 쉬운 형태로 유지하고 상대적으로 구현하기 쉽게 만든다.
+이 접근 방식은 데이터를 매우 이동이 쉬운 형태로 유지하고 상대적으로 구현이 쉽다.
 
 이는 확장에 특별히 좋은 형태는 아니지만 프로토타입으로 지금으로서는 충분하다. 우리는 `PlayerStore`를 추상화했기 때문에 만약 우리의 환경이 변하고 더 이상 적절하지 않다면 간단히 다른 무언가로 간단히 변경할 수 있다.
 
@@ -147,7 +147,7 @@ func main() {
 
 ## 테스트부터 작성하기
 
-이제 당신은 데이터를 읽고(`io.Reader`), 쓰는(`io.Writer`) 표준 라이브러리들의 인터페이스와 실제 파일들을 사용하지 않고 이런 기능들을 테스트하기 위해 표준 라이브러리를 사용하는 법에 익숙해져야 한다.
+이제 데이터를 읽고(`io.Reader`), 쓰는(`io.Writer`) 표준 라이브러리들의 인터페이스와 실제 파일들을 사용하지 않고 이런 기능들을 테스트하기 위해 표준 라이브러리를 사용하는 법에 익숙해져야 한다.
 
 이 작업을 완료하기 위해 우리는 `PlayStore`를 구현해야 한다. 그리고 스토어가 우리가 구현해야 하는 메서드를 호출할 수 있도록 하는 테스트를 작성해야 한다. `GetLeague`부터 시작해보자.
 
@@ -200,7 +200,7 @@ type FileSystemPlayerStore struct {}
 ./file_system_store_test.go:17:15: store.GetLeague undefined (type FileSystemPlayerStore has no field or method GetLeague)
 ```
 
-우리가 `Reader`를 넘겨줬지만 입력을 기대하지 않고, `GetLeague`가 아직 정의되어 있지 않기 때문에 컴파일 에러가 발생한다.
+우리가 `Reader`를 전달했지만 입력을 받을 준비가 되지 않았고, `GetLeague`가 아직 정의되어 있지 않기 때문에 컴파일 에러가 발생한다.
 
 ```go
 //file_system_store.go
@@ -223,7 +223,7 @@ func (f *FileSystemPlayerStore) GetLeague() []Player {
 
 ## 테스트를 통과하는 최소한의 코드 작성하기
 
-우리는 전에 리더로부터 JSON을 읽어왔다.
+우리는 전에 Reader로부터 JSON을 읽어왔다.
 
 ```go
 //file_system_store.go
@@ -234,11 +234,11 @@ func (f *FileSystemPlayerStore) GetLeague() []Player {
 }
 ```
 
-테스트는 통과할 것이다.
+테스트를 통과해야 한다.
 
 ## 리팩터링 하기
 
-우리는 이전에 이것을 _했었다_! 서버를 위한 우리의 테스트 코드는 응답으로부터 JSON을 디코딩 해야한다.
+우리는 이전에 이것을 _했었다_! 서버를 위한 테스트 코드는 응답으로부터 JSON을 디코딩 해야한다.
 
 함수에 DRY(Do not Repeat Yourself)를 적용해보자.
 
@@ -267,7 +267,7 @@ func (f *FileSystemPlayerStore) GetLeague() []Player {
 }
 ```
 
-우리는 아직 파싱 에러를 처리할 방법을 가지고 있지는 않지만 계속 진행해보자.
+아직 파싱 에러를 처리할 방법을 가지고 있지는 않지만 계속 진행해보자.
 
 ### 문제 찾기
 
@@ -312,7 +312,7 @@ type Seeker interface {
 }
 ```
 
-좋아 보인다. `FileSystemPlayerStore`을 이 인터페이스로 바꿀 수 있을까?
+괜찮아 보인다. `FileSystemPlayerStore`을 이 인터페이스로 바꿀 수 있을까?
 
 ```go
 //file_system_store.go
@@ -327,7 +327,7 @@ func (f *FileSystemPlayerStore) GetLeague() []Player {
 }
 ```
 
-테스트를 실행해보자. 테스트가 통과했다! 운이 좋게도 우리가 테스트에 사용한 `string.NewReader`도 `ReadSeeker`를 구현하고 있어서 더 이상 변경할 필요가 없다.
+테스트를 실행해보자. 이제 테스트가 통과되었다! 운이 좋게도 우리가 테스트에 사용한 `string.NewReader`도 `ReadSeeker`를 구현하고 있어서 더 이상 변경할 필요가 없다.
 
 다음으로 우리는 `GetPlayerScore`를 구현할 것이다.
 
@@ -417,11 +417,11 @@ t.Run("get player score", func(t *testing.T) {
 })
 ```
 
-마지막으로 우리는 `RecorddWin`으로 점수들을 기록해야 한다.
+마지막으로 `RecorddWin`으로 점수들을 기록해야 한다.
 
 ## 테스트부터 작성하기
 
-우리의 접근 방법은 쓰기에 상당히 근시안적이다. 우리는 파일 안에 있는 JSON의 한 "줄"만을 간단히 업데이트할 수 없다. 때문에 우리는 모든 쓰기마다 우리 데이터 베이스 전체의 새로운 표현을 저장해야만 합니다.
+우리의 접근 방법은 쓰기에 상당히 근시안적이다. 우리는 파일 안에 있는 JSON의 한 "줄"만을 (간단히) 업데이트할 수 없다. 그렇기 때문에 모든 쓰기마다 우리 데이터 베이스 전체의 새로운 표현을 저장해야만 한다.
 
 어떻게 쓰기를 할 수 있을까? 우리는 보통 `Writer`를 사용했지만, 우리는 이미 우리만의 `ReadSeeker`를 가지고 있다. 잠재적으로 우리는 2개의 의존성을 가질 수 있지만, 표준 라이브러리는 이미 파일에 필요한 모든 작업을 수행할 수 있는 `ReadWriteSeeker` 인터페이스를 가지고 있다.
 
@@ -480,7 +480,7 @@ func createTempFile(t testing.TB, initialData string) (io.ReadWriteSeeker, func(
 
 [TempFile](https://golang.org/pkg/io/ioutil/#TempDir)은 우리가 사용할 수 있는 임시 파일을 생성한다. 우리가 넘긴 `"db"` 값은 만들어질 임의 파일 이름에 붙는 접두사입니다. 이렇게 함으로써 다른 파일들과 우연히 충돌하는 것을 방지합니다.
 
-당신은 `ReadWriteSeeker`(파일) 뿐만 아니라 함수 또한 반환하고 있다는 것을 알고 있어야 합니다. 테스트가 끝나면 파일이 삭제되어야 한다는 것을 확실히 해야합니다. 에러가 발생하기 쉽고 리더에 무관심하기 때문에 테스트에 파일들의 세부사항들을 유출하고 싶지 않다. `removeFile` 함수를 반환함으로써, 헬퍼 안의 세부사항들을 관리할 수 있고 모든 호출자는 `defer cleanDatabase()`만 실행하기만 하면 된다.
+당신은 `ReadWriteSeeker`(파일) 뿐만 아니라 함수 또한 반환하고 있다는 것을 알고 있어야 합니다. 테스트가 끝나면 파일이 삭제되어야 한다는 것을 확실히 해야합니다. 에러가 발생하기 쉽고 Reader 무관심하기 때문에 테스트에 파일들의 세부사항들을 유출하고 싶지 않다. `removeFile` 함수를 반환함으로써, 헬퍼 안의 세부사항들을 관리할 수 있고 모든 호출자는 `defer cleanDatabase()`만 실행하기만 하면 된다.
 
 ```go
 //file_system_store_test.go
@@ -503,7 +503,7 @@ func TestFileSystemStore(t *testing.T) {
 
         assertLeague(t, got, want)
 
-        // read again
+        // 다시 읽는다.
         got = store.GetLeague()
         assertLeague(t, got, want)
     })
@@ -1221,7 +1221,7 @@ t.Run("league sorted", func(t *testing.T) {
 
     assertLeague(t, got, want)
 
-    // read again
+    // 다시 읽는다.
     got = store.GetLeague()
     assertLeague(t, got, want)
 })
